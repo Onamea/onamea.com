@@ -1,0 +1,40 @@
+{
+  "hash": "6f2060ec",
+  "configHash": "d54677a8",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "58bdf9d0",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/.deno/preact@10.27.2/node_modules/preact/compat/dist/compat.module.js",
+      "file": "react.js",
+      "fileHash": "7376c1d6",
+      "needsInterop": false
+    },
+    "react-dom": {
+      "src": "../../node_modules/.deno/preact@10.27.2/node_modules/preact/compat/dist/compat.module.js",
+      "file": "react-dom.js",
+      "fileHash": "8edd2aba",
+      "needsInterop": false
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/.deno/preact@10.27.2/node_modules/preact/compat/jsx-dev-runtime.mjs",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "a24291d4",
+      "needsInterop": false
+    },
+    "react/jsx-runtime": {
+      "src": "../../node_modules/.deno/preact@10.27.2/node_modules/preact/compat/jsx-runtime.mjs",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "a77e3124",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-K3YQIKSR": {
+      "file": "chunk-K3YQIKSR.js"
+    },
+    "chunk-L4EWHN2T": {
+      "file": "chunk-L4EWHN2T.js"
+    }
+  }
+}
