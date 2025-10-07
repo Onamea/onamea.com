@@ -15,7 +15,6 @@ const LatestNames = () => {
           throw new Error('Failed to fetch names')
         }
         const data = await response.json()
-        console.log(data)
         const namePromises = data.map(async (item: { value: { primaryKey: PrimaryKey, name: Name }}) => 
           await primaryKeyToFingerprintedName(item.value.primaryKey, item.value.name)
         )
