@@ -3,7 +3,7 @@ const About = () => {
     <div class="py-4">
       <h3>About</h3>
       <p>
-        A character set and encoding for displaying public keys using an ambiguous alphabet plus an additional emoji set. This allows for concise display of vanity names within public keys with an additional fingerprint. Resulting in the possibility to brute force searching for any desired name.
+        A way to encode vanity names within public keys. Plus an additional fingerprint encoded with emoji characters. Allowing for unique names, where duplicates (conflicting name + fingerprint pairs) will be exponentialy hard to find (brute force).
       </p>
       <p class="href-wrap">
         <a href="https://github.com/mikeobank/vanice/blob/main/vanice.md">https://github.com/mikeobank/vanice/blob/main/vanice.md</a>
