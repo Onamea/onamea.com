@@ -25,7 +25,7 @@ type Result = {
   fingerprintDisplay: FingerprintDisplay
 }
 
-const searchTerm = signal("")
+const searchName = signal("")
 const isWorking = signal(false)
 const name = signal<Name>()
 const primaryName = signal<PrimaryChars>()
@@ -34,15 +34,15 @@ const result = signal<Result>()
 
 const handleSubmit = async (e: SubmitEvent) => {
   e.preventDefault()
-  const searchTermValue = searchTerm.value.trim()
-  if (isName(searchTermValue) === false) {
-    error.value = "Invalid name"
+  const searchNameValue = searchName.value.trim()
+  if (isName(searchNameValue) === false) {
+    error.value = `${ searchNameValue } is not a valid name`
     return
   }
   error.value = ""
   result.value = undefined
-  name.value = searchTermValue as Name
-  primaryName.value = toPrimaryName(searchTermValue)
+  name.value = searchNameValue
+  primaryName.value = toPrimaryName(searchNameValue)
   isWorking.value = true
   const poolResult = await createWorkerPool(primaryName.value)
   const primaryKey = publicKeyToPrimaryKey(poolResult.publicKey)
@@ -56,26 +56,26 @@ const handleSubmit = async (e: SubmitEvent) => {
     fingerprintDisplay: displayFingerprint(fingerprint)
   }
   isWorking.value = false
-  searchTerm.value = ""
+  searchName.value = ""
 }
 
 const GenerateNameForm = () => {
   return (
     <div class="py-4">
-      <h3>Mine name</h3>
+      <h3>Claim your name</h3>
       <form onSubmit={ handleSubmit }>
         <input 
           type="text" 
-          placeholder="Name&hellip;" 
-          value={ searchTerm.value }
+          placeholder="Name" 
+          value={ searchName.value }
           onChange={ (e) => {
-            searchTerm.value = e.currentTarget.value
+            searchName.value = e.currentTarget.value
           }}
           />
         <button type="submit" disabled={ isWorking.value }>{ isWorking.value ? "Mining..." : "Mine" }</button>
       </form>
       <div>
-        { isWorking.value && <div class="isWorking py-4">searching for name: <strong>{ name.value }</strong> ({ primaryName.value })</div> }
+        { isWorking.value && <div class="isWorking py-4">Mining for name: <strong>{ name.value }</strong> ({ primaryName.value })</div> }
       </div>
       <div>
         { error.value && <div class="error py-4">{ error.value }</div> }
@@ -83,7 +83,7 @@ const GenerateNameForm = () => {
       <div>
         { result.value && 
           <div class="py-4">
-            <NameDisplay primaryKey={ result.value.primaryKey } name={ searchTerm.value } />
+            <NameDisplay primaryKey={ result.value.primaryKey } name={ result.value.name } />
             <p>primary key: { result.value.primaryKey }</p>
             <p>fingerprint: { displayFingerprint(result.value.fingerprint) }</p>
             <p>public key: { displayPublicKey(result.value.publicKey) }</p>

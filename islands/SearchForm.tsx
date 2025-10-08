@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals"
-import { type Name, type PrimaryKey } from "@vanice/types";
-import NameDisplay from "../components/NameDisplay.tsx";
+import { isName, type Name, type PrimaryKey } from "@vanice/types"
+import NameDisplay from "../components/NameDisplay.tsx"
 
 const searchTerm = signal("")
 const loading = signal(false)
@@ -11,13 +11,24 @@ const handleSubmit = async (e: Event) => {
 
   e.preventDefault()
 
-  if (!searchTerm.value.trim()) return
+  const name = searchTerm.value.trim()
+
+  if (name === "") {
+    error.value = "Please enter a name"
+    return
+  }
+
+  if (isName(name) === false) {
+    error.value = `"${ name }" is not a valid name`
+    return
+  }
 
   loading.value = true
   error.value = ""
+  results.value = undefined
   
   try {
-    const response = await fetch(`https://vanice-rest.mikeobank.deno.net/name/${encodeURIComponent(searchTerm.value)}`)
+    const response = await fetch(`https://vanice-rest.mikeobank.deno.net/name/${ encodeURIComponent(searchTerm.value) }`)
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`)
     }
@@ -25,7 +36,6 @@ const handleSubmit = async (e: Event) => {
     results.value = data
   } catch (err) {
     error.value = err instanceof Error ? err.message : "An error occurred"
-    results.value = undefined
   } finally {
     loading.value = false
   }
@@ -39,7 +49,7 @@ const SearchForm = () => {
       <form onSubmit={ handleSubmit }>
         <input 
           type="text" 
-          placeholder="Search&hellip;" 
+          placeholder="Name" 
           value={ searchTerm.value }
           onChange={ (e) => {
             searchTerm.value = e.currentTarget.value
@@ -50,10 +60,10 @@ const SearchForm = () => {
         </button>
       </form>
       
-      {error.value && <div class="error">{error.value}</div>}
+      {error.value && <div class="error">{ error.value }</div>}
       
       {results.value && results.value?.length === 0 && (
-        <div class="results py-4">No results found.</div>
+        <div class="results py-4">"{ searchTerm.value }" not found</div>
       )}
 
       {results.value && results.value.length > 0 && (
@@ -64,7 +74,7 @@ const SearchForm = () => {
 
       {results.value && !Array.isArray(results.value) && (
         <div class="results py-4">
-          <pre>{JSON.stringify(results.value, null, 2)}</pre>
+          <pre>{ JSON.stringify(results.value, null, 2) }</pre>
         </div>
       )}
     </div>

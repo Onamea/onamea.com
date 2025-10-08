@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
-import { type Name, type PrimaryKey, primaryKeyToFingerprintedName } from "jsr:@vanice/types"
+import { type Name, type PrimaryKey, primaryKeyToFingerprintedName } from "@vanice/types"
 
 const names = signal<string[]>([])
 const loading = signal(true)
@@ -31,7 +31,7 @@ const LatestNames = () => {
 
   return (
     <div class="py-4">
-      <h3>Recent names</h3>
+      <h3>Recently published names</h3>
       { loading.value && <p>Loading...</p>}
       { error.value && <p>Error: { error.value }</p>}
       { !loading.value && !error.value && (
