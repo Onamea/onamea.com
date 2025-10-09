@@ -2,7 +2,7 @@ import { define } from "../utils.ts"
 import LatestNames from "../islands/LatestNames.tsx"
 import GenerateNameForm from "../islands/GenerateNameForm.tsx"
 import SearchForm from "../islands/SearchForm.tsx"
-import About from "../components/About.tsx"
+import About from "../islands/About.tsx"
 
 export default define.page(function Home() {
   return (
