@@ -60,21 +60,17 @@ const SearchForm = () => {
         </button>
       </form>
       
-      {error.value && <div class="error">{ error.value }</div>}
+      { error.value && <div class="error">{ error.value }</div> }
       
-      {results.value && results.value?.length === 0 && (
+      { results.value && results.value?.length === 0 && (
         <div class="results py-4">"{ searchTerm.value }" not found</div>
       )}
 
       {results.value && results.value.length > 0 && (
         <div class="results py-4">
-          { results.value.map(r => (<NameDisplay primaryKey={ r.primaryKey } name={ r.name } />)) }
-        </div>
-      )}
-
-      {results.value && !Array.isArray(results.value) && (
-        <div class="results py-4">
-          <pre>{ JSON.stringify(results.value, null, 2) }</pre>
+          <ul>
+          { results.value.map(r => (<li><NameDisplay primaryKey={ r.primaryKey } name={ r.name } /></li>)) }
+          </ul>
         </div>
       )}
     </div>
