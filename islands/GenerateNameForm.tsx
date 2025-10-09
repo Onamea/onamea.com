@@ -50,7 +50,7 @@ const handleSubmit = async (e: SubmitEvent) => {
   result.value = {
     publicKey: poolResult.publicKey,
     privateKey: poolResult.privateKey,
-    name: primaryName.value,
+    name: name.value,
     primaryKey,
     fingerprint,
     fingerprintDisplay: displayFingerprint(fingerprint)
