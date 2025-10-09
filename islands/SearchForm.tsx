@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals"
-import { isName, type Name, type PrimaryKey } from "@vanice/types"
+import { isNameOrFingerprintedName, type Name, type PrimaryKey } from "@vanice/types"
 import NameDisplay from "../components/NameDisplay.tsx"
 
 const searchTerm = signal("")
@@ -18,7 +18,7 @@ const handleSubmit = async (e: Event) => {
     return
   }
 
-  if (isName(name) === false) {
+  if (isNameOrFingerprintedName(name) === false) {
     error.value = `"${ name }" is not a valid name`
     return
   }
