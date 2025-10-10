@@ -81,6 +81,7 @@ const GenerateNameForm = () => {
       <div>
         { isWorking.value && <div class="isWorking py-4">
             <p>Mining for name: <strong>{ name.value }</strong> ({ primaryName.value })</p>
+            <p>On average 1 in 32<sup>{ primaryName.value?.length }</sup> (<NumberDisplay value={ Math.pow(32, primaryName.value?.length ?? 0) }/>) keys will match</p>
             <p>Running 8 webworkers</p>
             <p>Total guesses: <NumberDisplay value={progress.value.totalAttempts} /> (<NumberDisplay value={progress.value.attemptsPerSecond} />/s)</p>
           </div> 
