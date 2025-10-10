@@ -34,6 +34,8 @@ const error = signal("")
 const result = signal<Result>()
 const progress = signal({ totalAttempts: 0, attemptsPerSecond: 0 })
 
+const url = new URL("/workers/worker.js", import.meta.url)
+
 const handleSubmit = async (e: SubmitEvent) => {
   e.preventDefault()
   const searchNameValue = searchName.value.trim()
@@ -46,7 +48,7 @@ const handleSubmit = async (e: SubmitEvent) => {
   name.value = searchNameValue
   primaryName.value = toPrimaryName(searchNameValue)
   isWorking.value = true
-  const poolResult = await createWorkerPool(primaryName.value, undefined, undefined, workerPoolStatus => { 
+  const poolResult = await createWorkerPool(primaryName.value, undefined, url, workerPoolStatus => { 
     progress.value = { totalAttempts: workerPoolStatus.totalAttempts, attemptsPerSecond: workerPoolStatus.attemptsPerSecond }
   })
   const primaryKey = publicKeyToPrimaryKey(poolResult.publicKey)
