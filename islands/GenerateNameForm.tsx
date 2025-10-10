@@ -15,6 +15,7 @@ import {
   type PrimaryChars,
 } from "@vanice/types"
 import NameDisplay from "../components/NameDisplay.tsx"
+import NumberDisplay from "../components/NumberDisplay.tsx"
 
 type Result = {
   publicKey: Uint8Array
@@ -31,6 +32,7 @@ const name = signal<Name>()
 const primaryName = signal<PrimaryChars>()
 const error = signal("")
 const result = signal<Result>()
+const progress = signal({ totalAttempts: 0, attemptsPerSecond: 0 })
 
 const handleSubmit = async (e: SubmitEvent) => {
   e.preventDefault()
@@ -44,7 +46,9 @@ const handleSubmit = async (e: SubmitEvent) => {
   name.value = searchNameValue
   primaryName.value = toPrimaryName(searchNameValue)
   isWorking.value = true
-  const poolResult = await createWorkerPool(primaryName.value)
+  const poolResult = await createWorkerPool(primaryName.value, undefined, undefined, workerPoolStatus => { 
+    progress.value = { totalAttempts: workerPoolStatus.totalAttempts, attemptsPerSecond: workerPoolStatus.attemptsPerSecond }
+  })
   const primaryKey = publicKeyToPrimaryKey(poolResult.publicKey)
   const fingerprint = await primaryKeyToFingerprint(primaryKey)
   result.value = {
@@ -75,7 +79,12 @@ const GenerateNameForm = () => {
         <button type="submit" disabled={ isWorking.value }>{ isWorking.value ? "Mining..." : "Mine" }</button>
       </form>
       <div>
-        { isWorking.value && <div class="isWorking py-4">Mining for name: <strong>{ name.value }</strong> ({ primaryName.value })</div> }
+        { isWorking.value && <div class="isWorking py-4">
+            <p>Mining for name: <strong>{ name.value }</strong> ({ primaryName.value })</p>
+            <p>Running 8 webworkers</p>
+            <p>Total guesses: <NumberDisplay value={progress.value.totalAttempts} /> (<NumberDisplay value={progress.value.attemptsPerSecond} />/s)</p>
+          </div> 
+        }
       </div>
       <div>
         { error.value && <div class="error py-4">{ error.value }</div> }

@@ -20,7 +20,7 @@
   ],
   "imports": {
     "@vanice/types": "jsr:@vanice/types@^0.1.7",
-    "@vanice/vanice-pool": "jsr:@vanice/vanice-pool@^0.1.5",
+    "@vanice/vanice-pool": "jsr:@vanice/vanice-pool@^0.1.7",
     "fresh": "jsr:@fresh/core@^2.1.1",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.3.1",
