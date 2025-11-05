@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
-import type { PrimaryKey, Name } from "@vanice/types";
-import { primaryKeyToFingerprintedName } from "@vanice/types";
+import type { PrimaryKey, Name } from "@vanice/types"
+import { primaryKeyToFingerprintedName } from "@vanice/types"
 
 const fingerprintedName = signal<string>()
 

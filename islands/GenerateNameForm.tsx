@@ -34,6 +34,8 @@ const error = signal("")
 const result = signal<Result>()
 const progress = signal({ totalAttempts: 0, attemptsPerSecond: 0 })
 
+const cryptoName = "Ed25519"
+
 const url = new URL("/workers/worker.js", import.meta.url)
 
 const handleSubmit = async (e: SubmitEvent) => {
@@ -48,10 +50,10 @@ const handleSubmit = async (e: SubmitEvent) => {
   name.value = searchNameValue
   primaryName.value = toPrimaryName(searchNameValue)
   isWorking.value = true
-  const poolResult = await createWorkerPool(primaryName.value, undefined, url, workerPoolStatus => { 
+  const poolResult = await createWorkerPool(cryptoName, primaryName.value, undefined, url, workerPoolStatus => { 
     progress.value = { totalAttempts: workerPoolStatus.totalAttempts, attemptsPerSecond: workerPoolStatus.attemptsPerSecond }
   })
-  const primaryKey = publicKeyToPrimaryKey(poolResult.publicKey)
+  const primaryKey = publicKeyToPrimaryKey(cryptoName, poolResult.publicKey)
   const fingerprint = await primaryKeyToFingerprint(primaryKey)
   result.value = {
     publicKey: poolResult.publicKey,
@@ -98,8 +100,8 @@ const GenerateNameForm = () => {
             <NameDisplay primaryKey={ result.value.primaryKey } name={ result.value.name } />
             <p>primary key: { result.value.primaryKey }</p>
             <p>fingerprint: { displayFingerprint(result.value.fingerprint) }</p>
-            <p>public key: { displayPublicKey(result.value.publicKey) }</p>
-            <p>private key: { displayPrivateKey(result.value.privateKey) }</p>
+            <p>public key: { displayPublicKey(cryptoName, result.value.publicKey) }</p>
+            <p>private key: { displayPrivateKey(cryptoName, result.value.privateKey) }</p>
           </div>
         }
       </div>
