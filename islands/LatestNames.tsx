@@ -1,8 +1,9 @@
 import { signal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
-import { type Name, type PrimaryKey, primaryKeyToFingerprintedName } from "@vanice/types"
+import { type Name, type PrimaryKey } from "@vanice/types"
+import NameDisplay from "../components/NameDisplay.tsx"
 
-const names = signal<string[]>([])
+const names = signal<{ name: Name, primaryKey: PrimaryKey }[]>([])
 const loading = signal(true)
 const error = signal<string | null>(null)
 
@@ -15,10 +16,8 @@ const LatestNames = () => {
           throw new Error('Failed to fetch names')
         }
         const data = await response.json()
-        const namePromises = data.map(async (item: { primaryKey: PrimaryKey, name: Name }) => 
-          await primaryKeyToFingerprintedName(item.primaryKey, item.name)
-        )
-        names.value = await Promise.all(namePromises)
+        names.value = data.map((item: { primaryKey: PrimaryKey, name: Name }) => ({ name: item.name, primaryKey: item.primaryKey }))
+        console.log(names.value)
       } catch (err) {
         error.value = err instanceof Error ? err.message : 'An error occurred'
       } finally {
@@ -37,7 +36,7 @@ const LatestNames = () => {
       { !loading.value && !error.value && (
         <ul>
           { names.value.map((name, index) => (
-            <li key={ index }>{ name }</li>
+            <li key={ index }><NameDisplay name={ name.name } primaryKey={ name.primaryKey } shouldLink /></li>
           ))}
         </ul>
       )}

@@ -1,6 +1,11 @@
 import { signal } from "@preact/signals"
 import { createWorkerPool } from "@vanice/vanice-pool"
 import { 
+  type Name, 
+  type PrimaryKey, 
+  type Fingerprint, 
+  type FingerprintDisplay, 
+  type PrimaryChars,
   isName, 
   toPrimaryName, 
   publicKeyToPrimaryKey, 
@@ -8,11 +13,7 @@ import {
   displayPublicKey, 
   displayPrivateKey, 
   displayFingerprint, 
-  type Name, 
-  type PrimaryKey, 
-  type Fingerprint, 
-  type FingerprintDisplay, 
-  type PrimaryChars,
+  toNameKey,
 } from "@vanice/types"
 import NameDisplay from "../components/NameDisplay.tsx"
 import NumberDisplay from "../components/NumberDisplay.tsx"
@@ -83,7 +84,8 @@ const GenerateNameForm = () => {
         <button type="submit" disabled={ isWorking.value }>{ isWorking.value ? "Mining..." : "Mine" }</button>
       </form>
       <div>
-        { isWorking.value && <div class="isWorking py-4">
+        { isWorking.value && 
+          <div class="isWorking py-4">
             <p>Mining for name: <strong>{ name.value }</strong> ({ primaryName.value })</p>
             <p>On average 1 in 32<sup>{ primaryName.value?.length }</sup> (<NumberDisplay value={ Math.pow(32, primaryName.value?.length ?? 0) }/>) keys will match</p>
             <p>Running 8 webworkers</p>
@@ -99,6 +101,7 @@ const GenerateNameForm = () => {
           <div class="py-4">
             <NameDisplay primaryKey={ result.value.primaryKey } name={ result.value.name } />
             <p>primary key: { result.value.primaryKey }</p>
+            <p>name key: { toNameKey(result.value.name, result.value.primaryKey) }</p>
             <p>fingerprint: { displayFingerprint(result.value.fingerprint) }</p>
             <p>public key: { displayPublicKey(cryptoName, result.value.publicKey) }</p>
             <p>private key: { displayPrivateKey(cryptoName, result.value.privateKey) }</p>

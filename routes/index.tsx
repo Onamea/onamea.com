@@ -3,7 +3,7 @@ import LatestNames from "../islands/LatestNames.tsx"
 import GenerateNameForm from "../islands/GenerateNameForm.tsx"
 import About from "../islands/About.tsx"
 
-export default define.page(function Home() {
+export default define.page(() => {
   return (
     <div class="main px-4 py-8 gradient min-h-screen">
       <div class="center">
