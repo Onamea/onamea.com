@@ -1,6 +1,6 @@
 import { FunctionComponent } from "preact"
 import { type PrimaryKey, type Name, createCreateOperation, toNameKey, displayPrivateKey, signOperation, toRawOperation } from "@vanice/types"
-import { signal } from "@preact/signals";
+import { useSignal } from "@preact/signals"
 
 type PublishFormProps = {
   primaryKey: PrimaryKey
@@ -9,9 +9,10 @@ type PublishFormProps = {
 }
 
 const cryptoName = "Ed25519"
-const publishStatus = signal<string>()
 
 const PublishForm: FunctionComponent<PublishFormProps> = ({ primaryKey, name, privateKey }) => {
+
+  const publishStatus = useSignal<string>()
 
   const nameKey = toNameKey(name, primaryKey)
   const privateKeyHex = displayPrivateKey(cryptoName, privateKey)

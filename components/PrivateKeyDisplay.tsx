@@ -1,5 +1,5 @@
 import { FunctionComponent } from "preact"
-import { signal } from "@preact/signals"
+import { useSignal } from "@preact/signals"
 import { type HexString, type PrivateKey, displayPrivateKey } from "@vanice/types"
 
 type PrivateKeyDisplayProps = {
@@ -7,13 +7,14 @@ type PrivateKeyDisplayProps = {
 }
 
 const cryptoName = "Ed25519"
-const isHidden = signal(true)
 const toHidden = (privateKey: HexString) => {
   const l = privateKey.length
   return "•".repeat(l)
 }
 
 const PrivateKeyDisplay: FunctionComponent<PrivateKeyDisplayProps> = ({ privateKey }) => {
+
+  const isHidden = useSignal(true)
 
   const privateKeyHex = displayPrivateKey(cryptoName, privateKey)
 
