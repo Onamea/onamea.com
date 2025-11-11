@@ -8,6 +8,7 @@
     "update": "deno run -A -r jsr:@fresh/update ."
   },
   "lint": {
+    "exclude": ["static/workers/*", ".vite/*"],
     "rules": {
       "tags": [
         "fresh",
