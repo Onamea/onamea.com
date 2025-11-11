@@ -1,4 +1,5 @@
-import { signal } from "@preact/signals"
+import { useSignal } from "@preact/signals"
+import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import type { PrimaryKey, Name } from "@vanice/types"
 import { primaryKeyToFingerprintedName, toNameKey } from "@vanice/types"
@@ -9,22 +10,22 @@ type Props = {
   shouldLink?: boolean
 }
 
-const fingerprintedName = signal<string>()
-const nameKey = signal<string>()
+const NameDisplay: FunctionComponent<Props> = ({ primaryKey, name, shouldLink = false }) => {
 
-const NameDisplay = ({ primaryKey, name, shouldLink = false }: Props) => {
+  const fingerprintedName = useSignal<string>()
+  const nameKey = useSignal<string>()
 
-  useEffect(()=>{
-    (async () => {
+  useEffect(() => {
+    nameKey.value = toNameKey(name, primaryKey)
+    ;(async () => {
       fingerprintedName.value = await primaryKeyToFingerprintedName(primaryKey, name)
-      nameKey.value = toNameKey(name, primaryKey)
     })()
   }, [primaryKey, name])
 
   return (
     <span class="name-display">
       { shouldLink ?
-        <a href={`/namekey/${ nameKey }`}>{ fingerprintedName.value ?? "" }</a> :
+        <a href={`/namekey/${ nameKey.value }`}>{ fingerprintedName.value ?? "" }</a> :
         <span>{ fingerprintedName.value ?? "" }</span>
       }
     </span>

@@ -8,6 +8,7 @@ const loading = signal(true)
 const error = signal<string | null>(null)
 
 const LatestNames = () => {
+
   useEffect(() => {
     const fetchNames = async () => {
       try {
@@ -15,9 +16,7 @@ const LatestNames = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch names')
         }
-        const data = await response.json()
-        names.value = data.map((item: { primaryKey: PrimaryKey, name: Name }) => ({ name: item.name, primaryKey: item.primaryKey }))
-        console.log(names.value)
+        names.value = await response.json()
       } catch (err) {
         error.value = err instanceof Error ? err.message : 'An error occurred'
       } finally {
@@ -35,8 +34,8 @@ const LatestNames = () => {
       { error.value && <p>Error: { error.value }</p>}
       { !loading.value && !error.value && (
         <ul>
-          { names.value.map((name, index) => (
-            <li key={ index }><NameDisplay name={ name.name } primaryKey={ name.primaryKey } shouldLink /></li>
+          { names.value.map(({ name, primaryKey }) => (
+            <li key={ primaryKey }><NameDisplay name={ name } primaryKey={ primaryKey } shouldLink /></li>
           ))}
         </ul>
       )}
