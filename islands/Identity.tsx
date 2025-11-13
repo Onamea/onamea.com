@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
 import { type Identity } from "@vanice/types"
-import NameDisplay from "../components/NameDisplay.tsx";
+import NameDisplay from "../components/NameDisplay.tsx"
 
 type Props = {
   nameKey: string
@@ -39,6 +39,11 @@ const Identity = ({ nameKey }: Props) => {
       { !loading.value && !error.value && identity.value !== undefined && (
         <>
           <h1><NameDisplay name={ identity.value.name } primaryKey={ identity.value.primaryKey } /></h1>
+          <p>name key: { identity.value.nameKey }</p>
+          <p>fingerprint: { identity.value.fingerprintDisplay }</p>
+          <p>body: { identity.value.body }</p>
+          <p>tombstone: { String(identity.value.tombstone) }</p>
+          <h4>Operations</h4>
           <ul>
             { identity.value.operations.map((operation, index) => (
               <li key={ index}>
