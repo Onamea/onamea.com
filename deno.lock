@@ -8,9 +8,15 @@
     "jsr:@fresh/core@2": "2.1.1",
     "jsr:@fresh/core@^2.1.1": "2.1.1",
     "jsr:@fresh/plugin-vite@^1.0.4": "1.0.4",
+    "jsr:@noble/curves@2.0.1": "2.0.1",
     "jsr:@noble/ed25519@3": "3.0.0",
+    "jsr:@noble/hashes@2": "2.0.1",
+    "jsr:@noble/hashes@2.0.1": "2.0.1",
     "jsr:@noble/hashes@^1.8.0": "1.8.0",
     "jsr:@noble/secp256k1@3": "3.0.0",
+    "jsr:@scure/base@2.0.0": "2.0.0",
+    "jsr:@scure/bip32@^2.0.1": "2.0.1",
+    "jsr:@scure/bip39@^2.0.1": "2.0.1",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
     "jsr:@std/dotenv@~0.225.5": "0.225.5",
     "jsr:@std/encoding@1": "1.0.10",
@@ -28,9 +34,9 @@
     "jsr:@std/path@^1.1.1": "1.1.2",
     "jsr:@std/semver@1": "1.0.5",
     "jsr:@std/uuid@^1.0.7": "1.0.9",
-    "jsr:@vanice/types@0.2.0-alpha.2": "0.2.0-alpha.2",
+    "jsr:@vanice/types@0.2.0-alpha.13": "0.2.0-alpha.13",
     "jsr:@vanice/types@0.2.0-alpha.7": "0.2.0-alpha.7",
-    "jsr:@vanice/vanice-pool@~0.1.8": "0.1.8",
+    "jsr:@vanice/vanice-pool@~0.1.9": "0.1.9",
     "npm:@babel/core@^7.28.0": "7.28.4",
     "npm:@babel/preset-react@^7.27.1": "7.27.1_@babel+core@7.28.4",
     "npm:@mjackson/node-fetch-server@0.7": "0.7.0",
@@ -109,14 +115,41 @@
         "npm:vite@^7.1.4"
       ]
     },
+    "@noble/curves@2.0.1": {
+      "integrity": "21ef41d207a203f60ba37a4fdcbc4f4a545b10c5dab7f293889f18292f81ab23",
+      "dependencies": [
+        "jsr:@noble/hashes@2"
+      ]
+    },
     "@noble/ed25519@3.0.0": {
       "integrity": "cf3cc8022e0ab17649af2064be922b9653af8a2bbe695bd02f88317746dc619e"
     },
     "@noble/hashes@1.8.0": {
       "integrity": "b52a2fcb4d02f8d8137871564a31f1ee9e2b0d15eedabbf32d2f7333f0abc939"
     },
+    "@noble/hashes@2.0.1": {
+      "integrity": "e0e908292a0bf91099cf8ba0720a1647cef82ab38b588815b5e9535b4ff4d7bb"
+    },
     "@noble/secp256k1@3.0.0": {
       "integrity": "8d1639a9c06fcffacf720d8319e8e996e9fbfbaf868324e4cec5dc56b2ade1b9"
+    },
+    "@scure/base@2.0.0": {
+      "integrity": "2828432e39fdfc6712ce2a3029c56621e293e38ac5aa02be8c5ead312836fe2f"
+    },
+    "@scure/bip32@2.0.1": {
+      "integrity": "c35ab32dddac27cef80cf3f818294d2dc2c9fdb42f524f1dc1fda9f0f20d149a",
+      "dependencies": [
+        "jsr:@noble/curves",
+        "jsr:@noble/hashes@2.0.1",
+        "jsr:@scure/base"
+      ]
+    },
+    "@scure/bip39@2.0.1": {
+      "integrity": "18c276b3c6bb5ffa5cb369f1602f00a2e90a11e24ddd32afebc399c57dbd1550",
+      "dependencies": [
+        "jsr:@noble/hashes@2.0.1",
+        "jsr:@scure/base"
+      ]
     },
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
@@ -175,26 +208,28 @@
         "jsr:@std/bytes"
       ]
     },
-    "@vanice/types@0.2.0-alpha.2": {
-      "integrity": "c29873021691465c722ddb16b4fe98c5708596044496c0e29dcb61ab129aa9ea",
-      "dependencies": [
-        "jsr:@noble/ed25519",
-        "jsr:@noble/hashes",
-        "jsr:@noble/secp256k1"
-      ]
-    },
     "@vanice/types@0.2.0-alpha.7": {
       "integrity": "fca5c74353990f95c947359004b8bab519daaf6479da2fb2fee090fc9020a367",
       "dependencies": [
         "jsr:@noble/ed25519",
-        "jsr:@noble/hashes",
+        "jsr:@noble/hashes@^1.8.0",
         "jsr:@noble/secp256k1"
       ]
     },
-    "@vanice/vanice-pool@0.1.8": {
-      "integrity": "888209534fe7d9b50ecb77636c0936304f6c257f241b567f4a4b6a674cabd3b4",
+    "@vanice/types@0.2.0-alpha.13": {
+      "integrity": "18875e9c80ed62f58f18cf6289596118360720e40922722b9bc2373f8a89c2aa",
       "dependencies": [
-        "jsr:@vanice/types@0.2.0-alpha.2"
+        "jsr:@noble/ed25519",
+        "jsr:@noble/hashes@^1.8.0",
+        "jsr:@noble/secp256k1",
+        "jsr:@scure/bip32",
+        "jsr:@scure/bip39"
+      ]
+    },
+    "@vanice/vanice-pool@0.1.9": {
+      "integrity": "6ae0ebb5a5befa6fe208684b172c84e36f2805e6c9219fec7c52821e970ea97e",
+      "dependencies": [
+        "jsr:@vanice/types@0.2.0-alpha.13"
       ]
     }
   },
@@ -1183,7 +1218,7 @@
       "jsr:@fresh/core@^2.1.1",
       "jsr:@fresh/plugin-vite@^1.0.4",
       "jsr:@vanice/types@0.2.0-alpha.7",
-      "jsr:@vanice/vanice-pool@~0.1.8",
+      "jsr:@vanice/vanice-pool@~0.1.9",
       "npm:@preact/signals@^2.3.1",
       "npm:preact@^10.27.2",
       "npm:vite@^7.1.3"

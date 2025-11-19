@@ -16,12 +16,12 @@ import {
 } from "@vanice/types"
 import NameDisplay from "../components/NameDisplay.tsx"
 import NumberDisplay from "../components/NumberDisplay.tsx"
-import PrivateKeyDisplay from "../components/PrivateKeyDisplay.tsx";
-import PublishForm from "../components/PublishForm.tsx";
+import PrivateKeyDisplay from "../components/PrivateKeyDisplay.tsx"
+import PublishForm from "../components/PublishForm.tsx"
 
 type Result = {
   publicKey: Uint8Array
-  privateKey: Uint8Array
+  privateKey: Uint8Array | undefined
   name: Name
   primaryKey: PrimaryKey
   fingerprint: Fingerprint
@@ -105,8 +105,10 @@ const GenerateNameForm = () => {
             <p>name key: { toNameKey(result.value.name, result.value.primaryKey) }</p>
             <p>fingerprint: { displayFingerprint(result.value.fingerprint) }</p>
             <p>public key: { displayPublicKey(cryptoName, result.value.publicKey) }</p>
-            <p>private key: <PrivateKeyDisplay privateKey={ result.value.privateKey } /></p>
-            <PublishForm primaryKey={ result.value.primaryKey } name={ result.value.name } privateKey={ result.value.privateKey } />
+            <p>private key: { result.value.privateKey !== undefined ? <PrivateKeyDisplay privateKey={ result.value.privateKey } /> : "-" }</p>
+            { result.value.privateKey !== undefined &&
+              <PublishForm primaryKey={ result.value.primaryKey } name={ result.value.name } privateKey={ result.value.privateKey } />
+            }
           </div>
         }
       </div>
