@@ -37,6 +37,7 @@ const MiningForm: FunctionComponent = () => {
             />
           <button type="submit">Mine</button>
         </div>
+        { error.value === undefined && <p><a href="/mining">Advanced mining</a></p> }
         { error.value && <p class="error">{ error.value }</p> }
       </form>
     </div>
