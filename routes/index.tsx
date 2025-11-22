@@ -1,6 +1,6 @@
 import { define } from "../utils.ts"
 import LatestNames from "../islands/LatestNames.tsx"
-import GenerateNameForm from "../islands/GenerateNameForm.tsx"
+import MiningForm from "../islands/MiningForm.tsx"
 import About from "../islands/About.tsx"
 
 export default define.page(() => {
@@ -10,7 +10,7 @@ export default define.page(() => {
         <h1>Vanice</h1>
         <h2>Decentralized Naming</h2>
         <LatestNames />
-        <GenerateNameForm />
+        <MiningForm />
         <About />
       </div>
     </div>

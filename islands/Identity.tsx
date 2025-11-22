@@ -9,7 +9,7 @@ type Props = {
 
 const identity = signal<Identity>()
 const loading = signal(true)
-const error = signal<string | null>(null)
+const error = signal<string>()
 
 const Identity = ({ nameKey }: Props) => {
 

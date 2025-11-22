@@ -59,4 +59,8 @@ input, button {
   text-decoration: none;
   color: inherit;
 }
+.error {
+  color: red; 
+  font-weight: bold;
+}
 
