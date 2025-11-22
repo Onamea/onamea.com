@@ -1,3 +1,4 @@
+import { type FunctionComponent } from "preact"
 import { signal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
 import { type Identity } from "@vanice/types"
@@ -11,7 +12,7 @@ const identity = signal<Identity>()
 const loading = signal(true)
 const error = signal<string>()
 
-const Identity = ({ nameKey }: Props) => {
+const Identity: FunctionComponent<Props> = ({ nameKey }) => {
 
   useEffect(() => {
     const fetchIdentity = async () => {

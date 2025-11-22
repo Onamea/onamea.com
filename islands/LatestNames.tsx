@@ -1,3 +1,4 @@
+import { type FunctionComponent } from "preact"
 import { signal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
 import { type Name, type PrimaryKey } from "@vanice/types"
@@ -7,7 +8,7 @@ const names = signal<{ name: Name, primaryKey: PrimaryKey }[]>([])
 const loading = signal(true)
 const error = signal<string | null>(null)
 
-const LatestNames = () => {
+const LatestNames: FunctionComponent = () => {
 
   useEffect(() => {
     const fetchNames = async () => {

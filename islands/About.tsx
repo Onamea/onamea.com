@@ -1,4 +1,6 @@
-const About = () => {
+import { type FunctionComponent } from "preact"
+
+const About: FunctionComponent = () => {
   return (
     <div class="py-4">
       <h3>About</h3>
