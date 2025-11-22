@@ -21,6 +21,10 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
   const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault()
     const nameValue = name.value?.trim()
+    if (nameValue === undefined || nameValue === "") {
+      error.value = "Provide a name"
+      return
+    }
     if (isName(nameValue) === false) {
       error.value = `${ nameValue } is not a valid name`
       return
@@ -44,6 +48,7 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
           value={ name.value }
           onChange={ event => { name.value = event.currentTarget.value } }
           />
+        { error.value && <p class="error">{ error.value }</p> }
       </div>
       <div>
         <label for="cryptoName">Select cryptographic curve:</label>
@@ -63,10 +68,9 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
             />
         </div>
       }
-      <div>
+      <div class="input-wrap">
         <button type="submit">Mine</button>
       </div>
-      { error.value && <div class="error py-4">{ error.value }</div> }
     </form>
   )
 }

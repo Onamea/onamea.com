@@ -49,11 +49,17 @@ h2 {
 .href-wrap {
   word-break: break-all;
 }
-input, button {
+input, button, select, textarea, checkbox {
   padding: 1em;
   margin-right: 12px;
   border-radius: 16px;
   border: 1px solid rgb(47, 49, 59);
+}
+textarea {
+  width: calc(100% - 2em);
+  min-height: 8em;
+  display: block;
+  margin-bottom: 1em;
 }
 .name-display a {
   text-decoration: none;
@@ -62,5 +68,22 @@ input, button {
 .error {
   color: red; 
   font-weight: bold;
+}
+li {
+  margin-bottom: 0.5em;
+}
+p.message {
+  font-style: italic;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+div.input-wrap {
+  margin-top: 2em;
 }
 

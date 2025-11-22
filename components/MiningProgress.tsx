@@ -27,7 +27,9 @@ const MiningProgress: FunctionComponent<Props> = ({ nameToMine, progress }) => {
       <p>On average 1 in 32<sup>{ primaryNameLength }</sup> (<NumberDisplay value={ Math.pow(32, primaryNameLength ?? 0) }/>) keys will match</p>
       <p>Running 8 webworkers</p>
       <p>Total guesses: <NumberDisplay value={ progress.totalAttempts } /> (<NumberDisplay value={ progress.attemptsPerSecond } />/s)</p>
-      <button type="button" onClick={ onClick }>Abort mining</button> 
+      <div class="input-wrap">
+        <button type="button" onClick={ onClick }>Abort mining</button> 
+      </div>
     </div>
   )
 }

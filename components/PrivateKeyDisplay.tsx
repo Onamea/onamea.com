@@ -33,8 +33,10 @@ const PrivateKeyDisplay: FunctionComponent<Props> = ({ privateKey }) => {
   return (
     <>
       <span class="private-key-display">{ isHidden.value ? toHidden(privateKeyHex) : privateKeyHex }</span>
-      <button type="button" onClick={ onClickHidden }>{ isHidden.value ? "show" : "hide" }</button>
-      <button type="button" onClick={ onClickCopy }>copy</button>
+      <div class="input-wrap">
+        <button type="button" onClick={ onClickHidden }>{ isHidden.value ? "show" : "hide" }</button>
+        <button type="button" onClick={ onClickCopy }>copy</button>
+      </div>
     </>
   )
 }
