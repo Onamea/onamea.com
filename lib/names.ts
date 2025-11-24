@@ -1,13 +1,25 @@
 import { signal } from "@preact/signals"
-import { type SignatureDisplay, type Name, type PrimaryKey, type Identity } from "@vanice/types"
+import { type SignatureDisplay, type Identity, isIdentity } from "@vanice/types"
 
-export const names = signal<{ name: Name, primaryKey: PrimaryKey }[]>([])
+export const names = signal<Identity[]>([])
 export const isFetching = signal(false)
+export const isFetchingByNameKey = signal(false)
 export const isPosting = signal(false)
 export const fetchingError = signal<string>()
+export const fetchingByNameKeyError = signal<string>()
 export const postingError = signal<string>()
 
 const URL = "https://vanice-rest.mikeobank.deno.net/"
+
+const normalizeIdentity = (identity: Identity): Identity => {
+  return {
+    ...identity,
+    // Ensure publicKey is Uint8Array
+    publicKey: identity.publicKey instanceof Uint8Array
+      ? identity.publicKey
+      : new Uint8Array(Object.values(identity.publicKey))
+  }
+}
 
 export const fetchLatestNames = async (): Promise<void> => {
 
@@ -21,12 +33,42 @@ export const fetchLatestNames = async (): Promise<void> => {
     if (response.ok === false) {
       throw new Error("Failed to fetch names")
     }
-    // TODO: validate response
-    names.value = await response.json()
+    // Convert publicKey to Uint8Array
+    const identities = (await response.json()).map(normalizeIdentity)
+    // Validate identities
+    if (identities.every(isIdentity) === false) {
+      throw new Error("An invalid identity received from server")
+    }
+    names.value = identities
   } catch (err) {
     fetchingError.value = err instanceof Error ? err.message : "An error occurred"
   } finally {
     isFetching.value = false
+  }
+}
+
+export const fetchByNameKey = async (nameKey: string): Promise<Identity | undefined> => {
+
+  const identity = names.value.find(identity => identity.nameKey === nameKey)
+  if (identity !== undefined) {
+    return identity
+  }
+
+  try {
+    const response = await fetch(`${ URL }namekey/${ nameKey }`)
+    if (response.ok === false) {
+      throw new Error("Failed to fetch by nameKey")
+    }
+    const identity = normalizeIdentity(await response.json())
+    if (isIdentity(identity) === false) {
+      throw new Error("Invalid identity received from server")
+    }
+    names.value.push(identity)
+    return identity
+  } catch (err) {
+    fetchingByNameKeyError.value = err instanceof Error ? err.message : "An error occurred"
+  } finally {
+    isFetchingByNameKey.value = false
   }
 }
 
@@ -47,8 +89,11 @@ export const publishOperations = async (operations: { raw: string, signature: Si
       throw new Error(`Publish failed: ${ response.statusText }`)
     }
     const [identity] = await response.json()
+    if (isIdentity(identity) === false) {
+      throw new Error("Invalid identity received from server")
+    }
     // TODO: validate response
-    names.value.push({ name: identity.name, primaryKey: identity.primaryKey })
+    names.value.push(identity)
     return identity
   } catch (err) {
     postingError.value = err instanceof Error ? err.message : String(err)

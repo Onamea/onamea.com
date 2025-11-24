@@ -1,43 +1,30 @@
 import { type FunctionComponent } from "preact"
-import { signal } from "@preact/signals"
+import { useSignal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
 import { toNameKey, type Identity } from "@vanice/types"
 import NameDisplay from "../components/NameDisplay.tsx"
+import { fetchByNameKey, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/names.ts"
 
 type Props = {
   nameKey: string
 }
 
-const identity = signal<Identity>()
-const loading = signal(true)
-const error = signal<string>()
-
 const Identity: FunctionComponent<Props> = ({ nameKey }) => {
 
-  useEffect(() => {
-    const fetchIdentity = async () => {
-      try {
-        const response = await fetch(`https://vanice-rest.mikeobank.deno.net/namekey/${ nameKey }`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch nameKey')
-        }
-        const data = await response.json()
-        identity.value = data
-      } catch (err) {
-        error.value = err instanceof Error ? err.message : 'An error occurred'
-      } finally {
-        loading.value = false
-      }
-    }
+  const identity = useSignal<Identity>()
 
-    fetchIdentity()
-  }, [])
+  useEffect(() => {
+    ;(async () => {
+      console.log(await fetchByNameKey(nameKey))
+      identity.value = await fetchByNameKey(nameKey)
+    })()
+  }, [nameKey])
 
   return (
     <div class="py-4">
-      { loading.value && <p>Loading...</p>}
-      { error.value && <p>Error: { error.value }</p>}
-      { !loading.value && !error.value && identity.value !== undefined && (
+      { isFetchingByNameKey.value && <p>Loading...</p>}
+      { fetchingByNameKeyError.value && <p>Error: { fetchingByNameKeyError.value }</p>}
+      { identity.value && (
         <>
           <h1><NameDisplay name={ identity.value.name } primaryKey={ identity.value.primaryKey } /></h1>
           <p><label>name key:</label> { toNameKey(identity.value.name, identity.value.primaryKey) }</p>
