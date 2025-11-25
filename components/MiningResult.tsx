@@ -27,7 +27,7 @@ const MiningResult: FunctionComponent<Props> = ({
   return (
     <div class="result py-4">
       <p class="message">Name found!</p>
-      <hr></hr>
+      <hr/>
       <h1><NameDisplay primaryKey={ primaryKey } name={ name } /></h1>
       <p><label>name key:</label> { toNameKey(name, primaryKey) }</p>
       <p><label>fingerprint:</label> { fingerprintDisplay }</p>
@@ -36,9 +36,13 @@ const MiningResult: FunctionComponent<Props> = ({
       { mnemonic && <p><label>mnemonic:</label> { toMnemonicString(mnemonic) }</p> }
       { xPub && <p><label>xPub:</label> { xPub }</p> }
       { xPub && index && <p><label>index:</label> { index }</p> }
-      <hr></hr>
-      { privateKey && <PublishForm primaryKey={ primaryKey } name={ name } privateKey={ privateKey } /> }
-      <hr></hr>
+      <hr/>
+      { privateKey && 
+        <>
+          <PublishForm primaryKey={ primaryKey } name={ name } privateKey={ privateKey } />
+          <hr/>
+        </>
+      }
       <div class="input-wrap">
         <button type="button" onClick={ onClick }>Clear result</button> 
       </div>

@@ -20,7 +20,7 @@ const initialProgress = { totalAttempts: 0, attemptsPerSecond: 0 }
 
 export const isMining = signal(false)
 export const nameToMine = signal<Name>()
-//export const error = signal<string>()
+export const error = signal<string>()
 export const progress = signal(initialProgress)
 export const result = signal<MiningResult>()
 
@@ -46,30 +46,39 @@ export const startMining = async (cryptoName: CryptoName, name: Name, shouldGene
   nameToMine.value = name
   const primaryName = toPrimaryName(name)
 
-  const r = await createWorkerPool(
-    cryptoName, 
-    primaryName, 
-    undefined, 
-    url, 
-    ({ totalAttempts, attemptsPerSecond }) => { 
-      progress.value = { totalAttempts, attemptsPerSecond }
-    },
-    undefined,
-    shouldGenerateMnemonic,
-    xPub
-  )
-  const primaryKey = publicKeyToPrimaryKey(cryptoName, r.publicKey)
-  const fingerprint = await primaryKeyToFingerprint(primaryKey)
-  const fingerprintDisplay = displayFingerprint(fingerprint)
-  result.value = {
-    ...r,
-    cryptoName,
-    name,
-    primaryKey,
-    fingerprint,
-    fingerprintDisplay
+  console.log(xPub)
+
+  try {
+    const r = await createWorkerPool(
+      cryptoName, 
+      primaryName, 
+      undefined, 
+      url, 
+      ({ totalAttempts, attemptsPerSecond }) => { 
+        progress.value = { totalAttempts, attemptsPerSecond }
+      },
+      undefined,
+      xPub === undefined ? shouldGenerateMnemonic : false,
+      xPub
+    )
+    if (r !== undefined) {
+      console.log("Mining result:", r)
+      const primaryKey = publicKeyToPrimaryKey(cryptoName, r.publicKey)
+      const fingerprint = await primaryKeyToFingerprint(primaryKey)
+      const fingerprintDisplay = displayFingerprint(fingerprint)
+      result.value = {
+        ...r,
+        cryptoName,
+        name,
+        primaryKey,
+        fingerprint,
+        fingerprintDisplay
+      }
+    }
+    stopMining()
+  } catch (err) {
+    error.value = (err as Error).message
   }
-  stopMining()
 }
 
 export const stopMining = () => {

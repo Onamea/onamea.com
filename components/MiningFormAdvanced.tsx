@@ -1,6 +1,6 @@
 import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { type CryptoName, isName, cryptoNames } from "@vanice/types"
+import { type CryptoName, isName, cryptoNames, isXPub } from "@vanice/types"
 import { startMining } from "../lib/mining.ts"
 
 type Props = {
@@ -11,17 +11,22 @@ const canGenerateMnemonic = (cryptoName: CryptoName) => {
   return cryptoName !== "Ed25519"
 }
 
+const canMineFromXPub = (cryptoName: CryptoName) => {
+  return cryptoName !== "Ed25519"
+}
+
 const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
 
-  const name = useSignal<string | undefined>(nameProp)
+  const name = useSignal<string>(nameProp ?? "")
   const cryptoName = useSignal<CryptoName>(cryptoNames[0])
   const shouldGenerateMnemonic = useSignal(false)
+  const xpub = useSignal("")
   const error = useSignal<string>()
 
   const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault()
     const nameValue = name.value?.trim()
-    if (nameValue === undefined || nameValue === "") {
+    if (nameValue === "") {
       error.value = "Provide a name"
       return
     }
@@ -29,12 +34,18 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
       error.value = `${ nameValue } is not a valid name`
       return
     }
+    const xpubValue = xpub.value?.trim()
+    console.log(xpubValue)
+    if (xpubValue !== "" && isXPub(xpubValue) === false) {
+      error.value = `${ xpubValue } is not a valid XPub`
+      return
+    }
     error.value = undefined
-    globalThis.location.replace(`/mining?name=${ nameValue }`)
     await startMining(
       cryptoName.value, 
       nameValue, 
-      canGenerateMnemonic(cryptoName.value) ? shouldGenerateMnemonic.value : false
+      canGenerateMnemonic(cryptoName.value) ? shouldGenerateMnemonic.value : false,
+      canMineFromXPub(cryptoName.value) && xpubValue !== "" ? xpubValue : undefined
     )
   }
 
@@ -65,6 +76,15 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
             type="checkbox" 
             name="shouldGenerateMnemonic" 
             onChange={ event => shouldGenerateMnemonic.value = event.currentTarget.checked }
+            />
+        </div>
+      }
+      { canMineFromXPub(cryptoName.value) && 
+        <div>
+          <label for="xpub">XPub:</label>
+          <input 
+            name="xpub" 
+            onChange={ event => xpub.value = event.currentTarget.value }
             />
         </div>
       }
