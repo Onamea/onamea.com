@@ -39,7 +39,7 @@ const MiningResult: FunctionComponent<Props> = ({
       <hr/>
       { privateKey && 
         <>
-          <PublishForm primaryKey={ primaryKey } name={ name } privateKey={ privateKey } />
+          <PublishForm primaryKey={ primaryKey } name={ name } privateKey={ privateKey } cryptoName={ cryptoName } />
           <hr/>
         </>
       }
