@@ -1,49 +1,33 @@
 import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
+import { useMemo } from "preact/hooks"
 import { 
   type PrimaryKey, 
   type Name, 
-  type Operations,
   toNameKey, 
   displayPrivateKey, 
-  createCreateOperation, 
-  createSetOperation,
-  signOperation, 
-  toRawOperation
+  CryptoName
 } from "@vanice/types"
-import { publishOperations, postingError } from "../lib/names.ts"
+import { postingError, publish } from "../lib/names.ts"
 
 type Props = {
+  cryptoName: CryptoName
   primaryKey: PrimaryKey
   name: Name
   privateKey: Uint8Array
 }
 
-const cryptoName = "Ed25519"
-
-const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKey }) => {
+const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKey, cryptoName }) => {
 
   const body = useSignal("")
 
-  const nameKey = toNameKey(name, primaryKey)
-  const privateKeyHex = displayPrivateKey(cryptoName, privateKey)
+  const nameKey = useMemo(() => toNameKey(name, primaryKey), [name, primaryKey])
+  const privateKeyHex = useMemo(() => displayPrivateKey(cryptoName, privateKey), [cryptoName, privateKey])
 
   const onSubmit = async (event: Event) => {
     event.preventDefault()
-    const operations: Operations = []
-    const createOperation = await createCreateOperation(primaryKey, name)
-    operations.push(createOperation)
-    const bodyValue = body.value.trim()
-    if (bodyValue !== "") {
-      const setOperation = await createSetOperation(primaryKey, name, createOperation.hash, bodyValue)
-      operations.push(setOperation)
-    }
-    const promises = operations.map(operation => signOperation(operation, privateKey))
-    const signedOperations = await Promise.all(promises)
-    const b = signedOperations.map(operation => ({ raw: toRawOperation(operation), signature: operation.signature }))
-    const identity = await publishOperations(b)
+    const identity = await publish(cryptoName, privateKey, nameKey, body?.value)
     if (identity !== undefined) {
-      const nameKey = toNameKey(identity.name, identity.primaryKey)
       globalThis.location.assign(`/namekey/${ nameKey }`)
     }
   }

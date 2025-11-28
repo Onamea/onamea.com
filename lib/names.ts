@@ -1,5 +1,6 @@
 import { signal } from "@preact/signals"
-import { type SignatureDisplay, type Identity, isIdentity } from "@vanice/types"
+import type { Identity, PrivateKey, Operations, NameKey, Messages, CryptoName } from "@vanice/types"
+import { keyPairFromPrivateKey, toRawOperation, isIdentity, createCreateOperation, createSetOperation, signMessage } from "@vanice/types"
 
 export const names = signal<Identity[]>([])
 export const isFetching = signal(false)
@@ -10,16 +11,6 @@ export const fetchingByNameKeyError = signal<string>()
 export const postingError = signal<string>()
 
 const URL = "https://vanice-rest.mikeobank.deno.net/"
-
-const normalizeIdentity = (identity: Identity): Identity => {
-  return {
-    ...identity,
-    // Ensure publicKey is Uint8Array
-    publicKey: identity.publicKey instanceof Uint8Array
-      ? identity.publicKey
-      : new Uint8Array(Object.values(identity.publicKey))
-  }
-}
 
 export const fetchLatestNames = async (): Promise<void> => {
 
@@ -34,7 +25,7 @@ export const fetchLatestNames = async (): Promise<void> => {
       throw new Error("Failed to fetch names")
     }
     // Convert publicKey to Uint8Array
-    const identities = (await response.json()).map(normalizeIdentity)
+    const identities = await response.json()
     // Validate identities
     if (identities.every(isIdentity) === false) {
       throw new Error("An invalid identity received from server")
@@ -59,7 +50,7 @@ export const fetchByNameKey = async (nameKey: string): Promise<Identity | undefi
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
-    const identity = normalizeIdentity(await response.json())
+    const identity = await response.json()
     if (isIdentity(identity) === false) {
       throw new Error("Invalid identity received from server")
     }
@@ -72,7 +63,26 @@ export const fetchByNameKey = async (nameKey: string): Promise<Identity | undefi
   }
 }
 
-export const publishOperations = async (operations: { raw: string, signature: SignatureDisplay }[]): Promise<Identity | undefined> => {
+export const publish = async (cryptoName: CryptoName, privateKey: PrivateKey, nameKey: NameKey, body?: string): Promise<Identity | undefined> => {
+
+  const operations: Operations = []
+  const createOperation = await createCreateOperation(nameKey)
+  operations.push(createOperation)
+  const bodyValue = body?.trim()
+  if (bodyValue !== undefined && bodyValue !== "") {
+    const setOperation = await createSetOperation(nameKey, createOperation.hash, bodyValue)
+    operations.push(setOperation)
+  }
+  const keyPair = keyPairFromPrivateKey(cryptoName, privateKey)
+  const promises = operations.map(operation => {
+    const message = { raw: toRawOperation(operation) }
+    return signMessage(message, keyPair, Date.now())
+  })
+  const signedMessages = await Promise.all(promises)
+  return await publishMessages(signedMessages)
+}
+
+export const publishMessages = async (messages: Messages): Promise<Identity | undefined> => {
 
   postingError.value = undefined
   isPosting.value = true
@@ -83,7 +93,7 @@ export const publishOperations = async (operations: { raw: string, signature: Si
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(operations)
+      body: JSON.stringify(messages)
     })
     if (response.ok === false) {
       throw new Error(`Publish failed: ${ response.statusText }`)
