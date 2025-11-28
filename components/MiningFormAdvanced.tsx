@@ -35,7 +35,6 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
       return
     }
     const xpubValue = xpub.value?.trim()
-    console.log(xpubValue)
     if (xpubValue !== "" && isXPub(xpubValue) === false) {
       error.value = `${ xpubValue } is not a valid XPub`
       return
@@ -47,6 +46,11 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
       canGenerateMnemonic(cryptoName.value) ? shouldGenerateMnemonic.value : false,
       canMineFromXPub(cryptoName.value) && xpubValue !== "" ? xpubValue : undefined
     )
+    name.value = ""
+    cryptoName.value = cryptoNames[0]
+    shouldGenerateMnemonic.value = false
+    xpub.value = ""
+    return
   }
 
   return (
