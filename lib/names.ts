@@ -40,7 +40,7 @@ export const fetchLatestNames = async (): Promise<void> => {
 
 export const fetchByNameKey = async (nameKey: string): Promise<Identity | undefined> => {
 
-  const identity = names.value.find(identity => identity.nameKey === nameKey)
+  const identity = names.value.find(identity => identity.id === nameKey)
   if (identity !== undefined) {
     return identity
   }

@@ -15,7 +15,6 @@ const Identity: FunctionComponent<Props> = ({ nameKey }) => {
 
   useEffect(() => {
     ;(async () => {
-      console.log(await fetchByNameKey(nameKey))
       identity.value = await fetchByNameKey(nameKey)
     })()
   }, [nameKey])
@@ -27,7 +26,7 @@ const Identity: FunctionComponent<Props> = ({ nameKey }) => {
       { identity.value && (
         <>
           <h1><NameDisplay name={ identity.value.name } primaryKey={ identity.value.primaryKey } /></h1>
-          <p><label>name key:</label> { toNameKey(identity.value.name, identity.value.primaryKey) }</p>
+          <p><label>id:</label> { toNameKey(identity.value.name, identity.value.primaryKey) }</p>
           <p><label>fingerprint:</label> { identity.value.fingerprintDisplay }</p>
           <p><label>body:</label> { identity.value.body }</p>
           <p><label>tombstone:</label> { String(identity.value.tombstone) }</p>

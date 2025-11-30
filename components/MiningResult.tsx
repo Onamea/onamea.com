@@ -29,7 +29,7 @@ const MiningResult: FunctionComponent<Props> = ({
       <p class="message">Name found!</p>
       <hr/>
       <h1><NameDisplay primaryKey={ primaryKey } name={ name } /></h1>
-      <p><label>name key:</label> { toNameKey(name, primaryKey) }</p>
+      <p><label>id:</label> { toNameKey(name, primaryKey) }</p>
       <p><label>fingerprint:</label> { fingerprintDisplay }</p>
       <p><label>public key:</label> { displayPublicKey(cryptoName, publicKey) }</p>
       { privateKey && <p><label>private key:</label> <PrivateKeyDisplay privateKey={ privateKey } /></p> }
