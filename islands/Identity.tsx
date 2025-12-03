@@ -1,23 +1,23 @@
 import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
-import { toNameKey, type Identity } from "@vanice/types"
+import { toNameKey, type Identity, type Id } from "@vanice/types"
 import NameDisplay from "../components/NameDisplay.tsx"
-import { fetchByNameKey, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/names.ts"
+import { fetchById, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/names.ts"
 
 type Props = {
-  nameKey: string
+  id: Id
 }
 
-const Identity: FunctionComponent<Props> = ({ nameKey }) => {
+const Identity: FunctionComponent<Props> = ({ id }) => {
 
   const identity = useSignal<Identity>()
 
   useEffect(() => {
     ;(async () => {
-      identity.value = await fetchByNameKey(nameKey)
+      identity.value = await fetchById(id)
     })()
-  }, [nameKey])
+  }, [id])
 
   return (
     <div class="py-4">

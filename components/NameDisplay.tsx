@@ -12,23 +12,26 @@ type Props = {
 
 const NameDisplay: FunctionComponent<Props> = ({ primaryKey, name, shouldLink = false }) => {
 
-  const fingerprintedName = useSignal<string>()
   const nameKey = useSignal<string>()
+  const fingerprintedName = useSignal<string>()
+  const fingerprint = useSignal<string>()
 
   useEffect(() => {
     nameKey.value = toNameKey(name, primaryKey)
     ;(async () => {
-      fingerprintedName.value = await primaryKeyToFingerprintedName(primaryKey, name)
+      const [_fingerprintedName,, _fingerprint] = await primaryKeyToFingerprintedName(primaryKey, name)
+      fingerprintedName.value = _fingerprintedName
+      fingerprint.value = _fingerprint
     })()
   }, [primaryKey, name])
 
   return (
     <span class="name-display">
       { shouldLink ?
-        <a href={`/namekey/${ nameKey.value }`}>{ fingerprintedName.value ?? "" }</a> :
-        <span>{ fingerprintedName.value ?? "" }</span>
+        <a href={`/identity/${ nameKey.value }`}>{ name }<span class="fingerprint">{ fingerprint.value ?? "" }</span></a> :
+        <>{ name }<span>{ fingerprint.value ?? "" }</span></>
       }
-    </span>
+    </span> 
   )
 }
 

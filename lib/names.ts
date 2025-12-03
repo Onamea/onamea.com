@@ -38,15 +38,15 @@ export const fetchLatestNames = async (): Promise<void> => {
   }
 }
 
-export const fetchByNameKey = async (nameKey: string): Promise<Identity | undefined> => {
+export const fetchById = async (id: string): Promise<Identity | undefined> => {
 
-  const identity = names.value.find(identity => identity.id === nameKey)
+  const identity = names.value.find(identity => identity.id === id)
   if (identity !== undefined) {
     return identity
   }
 
   try {
-    const response = await fetch(`${ URL }namekey/${ nameKey }`)
+    const response = await fetch(`${ URL }namekey/${ id }`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
