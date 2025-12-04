@@ -2,8 +2,9 @@ import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
 import { toNameKey, type Identity, type Id } from "@vanice/types"
-import NameDisplay from "../components/NameDisplay.tsx"
 import { fetchById, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/names.ts"
+import NameDisplay from "../components/NameDisplay.tsx"
+import IdentityUpdateForm from "../components/IdentityUpdateForm.tsx"
 
 type Props = {
   id: Id
@@ -38,6 +39,7 @@ const Identity: FunctionComponent<Props> = ({ id }) => {
               </li>
             )) }
           </ul>
+          { identity.value && <IdentityUpdateForm identity={ identity.value } /> }
         </>
       )}
     </div>
