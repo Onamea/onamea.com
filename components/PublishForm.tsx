@@ -28,7 +28,7 @@ const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKey, c
     event.preventDefault()
     const identity = await publish(cryptoName, privateKey, nameKey, body?.value)
     if (identity !== undefined) {
-      globalThis.location.assign(`/namekey/${ nameKey }`)
+      globalThis.location.assign(`/identity/${ nameKey }`)
     }
   }
 
