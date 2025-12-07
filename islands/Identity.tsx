@@ -5,6 +5,7 @@ import { toNameKey, type Identity, type Id } from "@vanice/types"
 import { fetchById, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/names.ts"
 import NameDisplay from "../components/NameDisplay.tsx"
 import IdentityUpdateForm from "../components/IdentityUpdateForm.tsx"
+import ErrorDisplay from "../components/ErrorDisplay.tsx"
 
 type Props = {
   id: Id
@@ -23,7 +24,7 @@ const Identity: FunctionComponent<Props> = ({ id }) => {
   return (
     <div class="py-4">
       { isFetchingByNameKey.value && <p>Loading...</p>}
-      { fetchingByNameKeyError.value && <p>Error: { fetchingByNameKeyError.value }</p>}
+      <ErrorDisplay message={fetchingByNameKeyError.value} />
       { identity.value && (
         <>
           <h1><NameDisplay name={ identity.value.name } primaryKey={ identity.value.primaryKey } /></h1>

@@ -6,6 +6,7 @@ import MiningFormAdvanced from "../components/MiningFormAdvanced.tsx"
 import MiningProgress from "../components/MiningProgress.tsx"
 import MiningResult from "../components/MiningResult.tsx"
 import { isMining, nameToMine, progress, result, error, startMining } from "../lib/mining.ts"
+import ErrorDisplay from "../components/ErrorDisplay.tsx"
 
 type Props = {
   name?: string
@@ -31,7 +32,7 @@ const Mining: FunctionComponent<Props> = ({ name }) => {
       <h1>Mining</h1>
       { useEffectHasRun.value && isMining.value === false && result.value === undefined && <MiningFormAdvanced /> }
       { isMining.value && nameToMine.value && progress.value && <MiningProgress nameToMine={ nameToMine.value } progress={ progress.value } /> }
-      { error.value && <p class="error">Error: { error.value }</p> }
+      <ErrorDisplay message={error.value} />
       { result.value && <MiningResult { ...result.value } /> }
     </div>
   )

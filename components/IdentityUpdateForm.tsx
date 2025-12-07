@@ -1,8 +1,19 @@
 import type { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import type { PrivateKeyDisplay, Identity } from "@vanice/types"
-import { isPrivateKeyDisplay, readCryptoNameFromPrimaryKey, keyPairFromPrivateKey, fromHex, publicKeyToPrimaryKey, createSetOperation, signMessage, toRawOperation  } from "@vanice/types"
-import { publishMessages } from "../lib/names.ts";
+import { 
+  type Identity, 
+  type PrivateKeyDisplay, 
+  isPrivateKeyDisplay, 
+  readCryptoNameFromPrimaryKey, 
+  keyPairFromPrivateKey, 
+  fromHex, 
+  publicKeyToPrimaryKey, 
+  createSetOperation, 
+  signMessage, 
+  toRawOperation 
+} from "@vanice/types"
+import { publishMessages } from "../lib/names.ts"
+import ErrorDisplay from "./ErrorDisplay.tsx"
 
 type Props = {
   identity: Identity
@@ -57,7 +68,7 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
             <>
               <label>private key</label>
               <input type="text" name="privateKey" onChange={ onChangePrivateKey } />
-              { privateKeyError.value && <p class="error-message">{ privateKeyError.value }</p> }
+              { privateKeyError.value && <ErrorDisplay message={privateKeyError.value} /> }
             </> :
             <>
               <label>body</label>

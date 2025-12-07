@@ -2,6 +2,7 @@ import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { type CryptoName, isName, cryptoNames, isXPub } from "@vanice/types"
 import { startMining } from "../lib/mining.ts"
+import ErrorDisplay from "./ErrorDisplay.tsx"
 
 type Props = {
   name?: string
@@ -63,7 +64,7 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
           value={ name.value }
           onChange={ event => { name.value = event.currentTarget.value } }
           />
-        { error.value && <p class="error">{ error.value }</p> }
+        <ErrorDisplay message={error.value} />
       </div>
       <div>
         <label for="cryptoName">Select cryptographic curve:</label>

@@ -1,6 +1,7 @@
 import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { isName } from "@vanice/types"
+import ErrorDisplay from "../components/ErrorDisplay.tsx"
 
 const MiningForm: FunctionComponent = () => {
 
@@ -38,7 +39,7 @@ const MiningForm: FunctionComponent = () => {
           <button type="submit">Mine</button>
         </div>
         { error.value === undefined && <p><a href="/mining">Advanced mining</a></p> }
-        { error.value && <p class="error">{ error.value }</p> }
+        <ErrorDisplay message={error.value} />
       </form>
     </div>
   )

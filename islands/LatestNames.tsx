@@ -2,6 +2,7 @@ import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import NameDisplay from "../components/NameDisplay.tsx"
 import { fetchLatestNames, names, isFetching, fetchingError } from "../lib/names.ts"
+import ErrorDisplay from "../components/ErrorDisplay.tsx"
 
 const LatestNames: FunctionComponent = () => {
 
@@ -15,7 +16,7 @@ const LatestNames: FunctionComponent = () => {
     <div class="py-4">
       <h3>Recently published names</h3>
       { isFetching.value && <p>Loading...</p>}
-      { fetchingError.value && <p>Error: { fetchingError.value }</p>}
+      <ErrorDisplay message={fetchingError.value} />
       { !isFetching.value && !fetchingError.value && (
         <ul>
           { names.value.map(({ name, primaryKey }) => (

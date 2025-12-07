@@ -9,6 +9,7 @@ import {
   CryptoName
 } from "@vanice/types"
 import { postingError, publish } from "../lib/names.ts"
+import ErrorDisplay from "./ErrorDisplay.tsx"
 
 type Props = {
   cryptoName: CryptoName
@@ -34,7 +35,7 @@ const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKey, c
 
   return (
     postingError.value 
-      ? <p>Error: { postingError.value }</p> 
+      ? <ErrorDisplay message={postingError.value} /> 
       : <form onSubmit={ onSubmit }>
           <input type="hidden" name="username" value={ nameKey } />
           <input type="hidden" name="password" value={ privateKeyHex } />
