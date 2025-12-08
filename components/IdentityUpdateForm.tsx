@@ -9,8 +9,8 @@ import {
   fromHex, 
   publicKeyToPrimaryKey, 
   createSetOperation, 
-  signMessage, 
-  toRawOperation 
+  signOperation,
+  getLatestHashFromOperations
 } from "@vanice/types"
 import { publishMessages } from "../lib/names.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
@@ -27,6 +27,7 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
   const privateKeyDisplay = useSignal<PrivateKeyDisplay>()
   const privateKeyError = useSignal<string>()
   const body = useSignal(identity.body ?? "")
+  const publishError = useSignal<string>()
 
   const onChangePrivateKey = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -44,16 +45,22 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
 
   const onSubmit = async (event: Event) => {
     event.preventDefault()
+    publishError.value = undefined
     if (privateKeyDisplay.value !== undefined) {
-      const previousHash = identity.operations[identity.operations.length - 1].hash
+      const previousHash = getLatestHashFromOperations(identity.operations)
+      if (previousHash === undefined) {
+        publishError.value = "Cannot determine previous hash for identity"
+        return
+      }
       const operation = await createSetOperation(identity.id, previousHash, body.value)
-      const message = { raw: toRawOperation(operation) }
       const keyPair = keyPairFromPrivateKey(cryptoName, fromHex(privateKeyDisplay.value))
-      const signedMessage = await signMessage(message, keyPair, Date.now())
+      const signedMessage = await signOperation(operation, keyPair, Date.now())
       const updatedIdentity = await publishMessages([signedMessage])
       if (updatedIdentity !== undefined) {
         globalThis.location.assign(`/identity/${ updatedIdentity.id }`)
       }
+    } else {
+      publishError.value = "Private key is required"
     }
   }
 
@@ -79,6 +86,7 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
                 rows={ 10 } 
                 cols={ 50 } 
               />
+              <ErrorDisplay message={ publishError.value } />
               <button type="submit">Submit</button>
               <button type="button" onClick={ () => { showForm.value = false } }>Cancel</button>
             </>

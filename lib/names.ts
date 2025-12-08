@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals"
 import type { Identity, PrivateKey, Operations, NameKey, Messages, CryptoName } from "@vanice/types"
-import { keyPairFromPrivateKey, toRawOperation, isIdentity, createCreateOperation, createSetOperation, signMessage } from "@vanice/types"
+import { keyPairFromPrivateKey, isIdentity, createCreateOperation, createSetOperation, signOperation } from "@vanice/types"
 
 export const names = signal<Identity[]>([])
 export const isFetching = signal(false)
@@ -75,8 +75,7 @@ export const publish = async (cryptoName: CryptoName, privateKey: PrivateKey, na
   }
   const keyPair = keyPairFromPrivateKey(cryptoName, privateKey)
   const promises = operations.map(operation => {
-    const message = { raw: toRawOperation(operation) }
-    return signMessage(message, keyPair, Date.now())
+    return signOperation(operation, keyPair, Date.now())
   })
   const signedMessages = await Promise.all(promises)
   return await publishMessages(signedMessages)
@@ -102,7 +101,6 @@ export const publishMessages = async (messages: Messages): Promise<Identity | un
     if (isIdentity(identity) === false) {
       throw new Error("Invalid identity received from server")
     }
-    // TODO: validate response
     names.value.push(identity)
     return identity
   } catch (err) {
