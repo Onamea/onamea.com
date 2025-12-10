@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "preact"
-import { displayPublicKey, toMnemonicString, toNameKey } from "@vanice/types"
+import { displayPublicKey, toMnemonicString, toNameKey, displayPrivateKey } from "@vanice/types"
 import NameDisplay from "./NameDisplay.tsx"
-import PrivateKeyDisplay from "./PrivateKeyDisplay.tsx"
+import SecretDisplay from "./SecretDisplay.tsx"
 import PublishForm from "./PublishForm.tsx"
 import { type MiningResult as Props, clearResult } from "../lib/mining.ts"
 
@@ -29,15 +29,17 @@ const MiningResult: FunctionComponent<Props> = ({
       <p class="message">Name found!</p>
       <hr/>
       <h1><NameDisplay primaryKey={ primaryKey } name={ name } /></h1>
-      <p><label>id:</label> { toNameKey(name, primaryKey) }</p>
-      <p><label>fingerprint:</label> { fingerprintDisplay }</p>
-      <p><label>public key:</label> { displayPublicKey(cryptoName, publicKey) }</p>
-      { privateKey && <p><label>private key:</label> <PrivateKeyDisplay privateKey={ privateKey } /></p> }
-      { mnemonic && <p><label>mnemonic:</label> { toMnemonicString(mnemonic) }</p> }
-      { xPub && <p><label>xPub:</label> { xPub }</p> }
-      { xPub && index && <p><label>index:</label> { index }</p> }
+      <dl>
+        <div><dd>id:</dd><dt>{ toNameKey(name, primaryKey) }</dt></div>
+        <div><dd>fingerprint:</dd><dt>{ fingerprintDisplay }</dt></div>
+        <div><dd>public key:</dd><dt>{ displayPublicKey(cryptoName, publicKey) }</dt></div>
+        { privateKey && <div><dd>private key:</dd><dt><SecretDisplay secret={ displayPrivateKey(cryptoName, privateKey) } /></dt></div> }
+        { mnemonic && <div><dd>mnemonic:</dd><dt><SecretDisplay secret={ toMnemonicString(mnemonic) } mapping="words" /></dt></div> }
+        { xPub && <div><dd>xPub:</dd><dt>{ xPub }</dt></div> }
+        { xPub && index && <div><dd>index:</dd><dt>{ index }</dt></div> }
+      </dl>
       <hr/>
-      { privateKey && 
+      { privateKey &&
         <>
           <PublishForm primaryKey={ primaryKey } name={ name } privateKey={ privateKey } cryptoName={ cryptoName } />
           <hr/>
