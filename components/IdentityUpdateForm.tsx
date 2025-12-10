@@ -10,10 +10,13 @@ import {
   publicKeyToPrimaryKey, 
   createSetOperation, 
   signOperation,
-  getLatestHashFromOperations
+  getLatestHashFromOperations,
+  displayPrivateKey
 } from "@vanice/types"
 import { publishMessages } from "../lib/names.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
+import useLocalStorageKeyPair, { toKeyPairDisplay } from "../hooks/useLocalStorageKeyPair.ts"
+import { useEffect } from "preact/hooks"
 
 type Props = {
   identity: Identity
@@ -22,12 +25,23 @@ type Props = {
 const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
 
   const cryptoName = readCryptoNameFromPrimaryKey(identity.primaryKey)
+  const [keyPair, setKeyPair] = useLocalStorageKeyPair()
 
   const showForm = useSignal(false)
   const privateKeyDisplay = useSignal<PrivateKeyDisplay>()
   const privateKeyError = useSignal<string>()
   const body = useSignal(identity.body ?? "")
   const publishError = useSignal<string>()
+
+
+  useEffect(() => {
+    if (keyPair?.privateKey !== undefined && keyPair?.cryptoName === cryptoName) {
+      const primaryKey = publicKeyToPrimaryKey(cryptoName, fromHex(keyPair.publicKey))
+      if (identity.primaryKey === primaryKey) {
+        privateKeyDisplay.value = displayPrivateKey(cryptoName, fromHex(keyPair.privateKey))
+      }
+    }
+  }, [keyPair, cryptoName, identity.primaryKey])
 
   const onChangePrivateKey = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -37,6 +51,7 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
       const primaryKey = publicKeyToPrimaryKey(cryptoName, keyPair.publicKey)
       if (identity.primaryKey === primaryKey) {
         privateKeyDisplay.value = input.value
+        setKeyPair(toKeyPairDisplay(keyPair))
       } else {
         privateKeyError.value = "Private key does not match Identity"
       }

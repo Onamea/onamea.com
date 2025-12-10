@@ -1,7 +1,8 @@
 import { signal } from "@preact/signals"
-import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, Mnemonic } from "@vanice/types"
+import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, Mnemonic, KeyPair } from "@vanice/types"
 import { displayFingerprint, publicKeyToPrimaryKey, primaryKeyToFingerprint, isCryptoName, isName, toPrimaryName, isXPub } from "@vanice/types"
 import { createWorkerPool } from "@vanice/vanice-pool"
+import { setKeyPair } from "../hooks/useLocalStorageKeyPair.ts"
 
 export type MiningResult = {
   cryptoName: CryptoName
@@ -46,8 +47,6 @@ export const startMining = async (cryptoName: CryptoName, name: Name, shouldGene
   nameToMine.value = name
   const primaryName = toPrimaryName(name)
 
-  console.log(xPub)
-
   try {
     const r = await createWorkerPool(
       cryptoName, 
@@ -66,6 +65,16 @@ export const startMining = async (cryptoName: CryptoName, name: Name, shouldGene
       const primaryKey = publicKeyToPrimaryKey(cryptoName, r.publicKey)
       const fingerprint = await primaryKeyToFingerprint(primaryKey)
       const fingerprintDisplay = displayFingerprint(fingerprint)
+      if (r.privateKey !== undefined) {
+        const keyPair: KeyPair = {
+          cryptoName,
+          publicKey: r.publicKey,
+          privateKey: r.privateKey,
+          mnemonic: r.mnemonic
+        }
+        setKeyPair(keyPair)
+      }
+
       result.value = {
         ...r,
         cryptoName,
