@@ -34,9 +34,9 @@
     "jsr:@std/path@^1.1.1": "1.1.2",
     "jsr:@std/semver@1": "1.0.5",
     "jsr:@std/uuid@^1.0.7": "1.0.9",
-    "jsr:@vanice/types@0.2.0-alpha.17": "0.2.0-alpha.17",
-    "jsr:@vanice/types@~0.2.4": "0.2.4",
-    "jsr:@vanice/vanice-pool@0.1.10": "0.1.10",
+    "jsr:@vanice/types@~0.2.14": "0.2.20",
+    "jsr:@vanice/types@~0.2.20": "0.2.20",
+    "jsr:@vanice/vanice-pool@~0.1.11": "0.1.11",
     "npm:@babel/core@^7.28.0": "7.28.4",
     "npm:@babel/preset-react@^7.27.1": "7.27.1_@babel+core@7.28.4",
     "npm:@mjackson/node-fetch-server@0.7": "0.7.0",
@@ -209,8 +209,8 @@
         "jsr:@std/bytes"
       ]
     },
-    "@vanice/types@0.2.0-alpha.17": {
-      "integrity": "0d1d71ed2706bf41303ea2dd4be00f3b11b1cb07f63c2c7dde4da0f73ff0da2c",
+    "@vanice/types@0.2.20": {
+      "integrity": "932f5a34f5618e4c82fa770cab1a413d0b840849352a703bfc1bba0fcb8071f7",
       "dependencies": [
         "jsr:@noble/ed25519",
         "jsr:@noble/hashes@^1.8.0",
@@ -219,20 +219,10 @@
         "jsr:@scure/bip39"
       ]
     },
-    "@vanice/types@0.2.4": {
-      "integrity": "a11a819637547e004b5fc0e231736d2cbc3661010b0d5b1b745b1c1a4d8f44c1",
+    "@vanice/vanice-pool@0.1.11": {
+      "integrity": "4602aef640d2fac18a10b7f53cd2c6917bed8f9d13c919bac3773c0087fef7bb",
       "dependencies": [
-        "jsr:@noble/ed25519",
-        "jsr:@noble/hashes@^1.8.0",
-        "jsr:@noble/secp256k1",
-        "jsr:@scure/bip32",
-        "jsr:@scure/bip39"
-      ]
-    },
-    "@vanice/vanice-pool@0.1.10": {
-      "integrity": "472ee3831ce9a6d7579d34637fabebf2fbe0aa9112a6dcccfef84dd50c306c3e",
-      "dependencies": [
-        "jsr:@vanice/types@0.2.0-alpha.17"
+        "jsr:@vanice/types@~0.2.14"
       ]
     }
   },
@@ -1226,8 +1216,8 @@
     "dependencies": [
       "jsr:@fresh/core@^2.1.1",
       "jsr:@fresh/plugin-vite@^1.0.4",
-      "jsr:@vanice/types@~0.2.4",
-      "jsr:@vanice/vanice-pool@0.1.10",
+      "jsr:@vanice/types@~0.2.20",
+      "jsr:@vanice/vanice-pool@~0.1.11",
       "npm:@preact/signals@^2.3.1",
       "npm:preact-router@^4.1.2",
       "npm:preact@^10.27.2",

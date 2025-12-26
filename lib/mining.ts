@@ -1,8 +1,15 @@
 import { signal } from "@preact/signals"
-import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, Mnemonic, KeyPair } from "@vanice/types"
-import { displayFingerprint, publicKeyToPrimaryKey, primaryKeyToFingerprint, isCryptoName, isName, toPrimaryName, isXPub } from "@vanice/types"
+import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, MnemonicDisplay } from "@vanice/types"
+import { 
+  displayFingerprint, 
+  publicKeyToPrimaryKey, 
+  primaryKeyToFingerprint, 
+  isCryptoName, 
+  isName, 
+  toPrimaryName, 
+  isXPub
+} from "@vanice/types"
 import { createWorkerPool } from "@vanice/vanice-pool"
-import { setKeyPair } from "../hooks/useLocalStorageKeyPair.ts"
 
 export type MiningResult = {
   cryptoName: CryptoName
@@ -12,7 +19,7 @@ export type MiningResult = {
   fingerprintDisplay: FingerprintDisplay
   publicKey: Uint8Array
   privateKey?: Uint8Array
-  mnemonic?: Mnemonic
+  mnemonicDisplay?: MnemonicDisplay
   xPub?: XPub
   index?: number
 }
@@ -30,24 +37,27 @@ const url = new URL("/workers/worker.js", import.meta.url)
 export const startMining = async (cryptoName: CryptoName, name: Name, shouldGenerateMnemonic = false, xPub?: XPub) => {
 
   if (isMining.value) {
-    throw new Error("Mining is already in progress")
+    error.value = "Mining is already in progress"
   }
 
   if (isCryptoName(cryptoName) === false) {
-    throw new Error(`Unsupported crypto name: ${ cryptoName }`)
+    error.value = `Unsupported crypto name: ${ cryptoName }`
   }
   if (isName(name) === false) {
-    throw new Error(`Invalid name: ${ name }`)
+    error.value = `Invalid name: ${ name }`
   }
   if (xPub !== undefined && isXPub(xPub) === false) {
-    throw new Error(`Invalid XPub: ${ xPub }`)
+    error.value = `Invalid XPub: ${ xPub }`
   }
 
   isMining.value = true
   nameToMine.value = name
   const primaryName = toPrimaryName(name)
 
+  console.log(xPub === undefined ? shouldGenerateMnemonic : false)
+
   try {
+
     const r = await createWorkerPool(
       cryptoName, 
       primaryName, 
@@ -60,24 +70,16 @@ export const startMining = async (cryptoName: CryptoName, name: Name, shouldGene
       xPub === undefined ? shouldGenerateMnemonic : false,
       xPub
     )
+
     if (r !== undefined) {
       console.log("Mining result:", r)
+
       const primaryKey = publicKeyToPrimaryKey(cryptoName, r.publicKey)
       const fingerprint = await primaryKeyToFingerprint(primaryKey)
       const fingerprintDisplay = displayFingerprint(fingerprint)
-      if (r.privateKey !== undefined) {
-        const keyPair: KeyPair = {
-          cryptoName,
-          publicKey: r.publicKey,
-          privateKey: r.privateKey,
-          mnemonic: r.mnemonic
-        }
-        setKeyPair(keyPair)
-      }
 
       result.value = {
         ...r,
-        cryptoName,
         name,
         primaryKey,
         fingerprint,

@@ -1,5 +1,5 @@
 import { type FunctionComponent } from "preact"
-import { displayPublicKey, toMnemonicString, toNameKey, displayPrivateKey } from "@vanice/types"
+import { toNameKey, displayPublicKey, displayPrivateKey } from "@vanice/types"
 import NameDisplay from "./NameDisplay.tsx"
 import SecretDisplay from "./SecretDisplay.tsx"
 import PublishForm from "./PublishForm.tsx"
@@ -12,7 +12,7 @@ const MiningResult: FunctionComponent<Props> = ({
   fingerprintDisplay, 
   publicKey, 
   privateKey, 
-  mnemonic, 
+  mnemonicDisplay, 
   xPub, 
   index 
 }) => {
@@ -24,6 +24,8 @@ const MiningResult: FunctionComponent<Props> = ({
     }
   }
 
+  const privateKeyDisplay = privateKey !== undefined ? displayPrivateKey(privateKey) : undefined
+
   return (
     <div class="result py-4">
       <p class="message">Name found!</p>
@@ -32,16 +34,16 @@ const MiningResult: FunctionComponent<Props> = ({
       <dl>
         <div><dd>id:</dd><dt>{ toNameKey(name, primaryKey) }</dt></div>
         <div><dd>fingerprint:</dd><dt>{ fingerprintDisplay }</dt></div>
-        <div><dd>public key:</dd><dt>{ displayPublicKey(cryptoName, publicKey) }</dt></div>
-        { privateKey && <div><dd>private key:</dd><dt><SecretDisplay secret={ displayPrivateKey(cryptoName, privateKey) } /></dt></div> }
-        { mnemonic && <div><dd>mnemonic:</dd><dt><SecretDisplay secret={ toMnemonicString(mnemonic) } mapping="words" /></dt></div> }
+        <div><dd>public key:</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
+        { privateKeyDisplay && <div><dd>private key:</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }
+        { mnemonicDisplay && <div><dd>mnemonic:</dd><dt><SecretDisplay secret={ mnemonicDisplay } mapping="words" /></dt></div> }
         { xPub && <div><dd>xPub:</dd><dt>{ xPub }</dt></div> }
         { xPub && index && <div><dd>index:</dd><dt>{ index }</dt></div> }
       </dl>
       <hr/>
-      { privateKey &&
+      { privateKeyDisplay &&
         <>
-          <PublishForm primaryKey={ primaryKey } name={ name } privateKey={ privateKey } cryptoName={ cryptoName } />
+          <PublishForm primaryKey={ primaryKey } name={ name } privateKeyDisplay={ privateKeyDisplay } cryptoName={ cryptoName } />
           <hr/>
         </>
       }

@@ -10,6 +10,7 @@ html {
 body {
   margin: 0;
   color: rgb(47, 49, 59);
+  background-color: rgb(200, 200, 200);
 }
 .px-4 {
   padding-left: 1rem;
@@ -29,15 +30,6 @@ body {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-}
-.gradient {
-  background-color: rgb(250, 209, 121);
-  background-image: linear-gradient(
-    to bottom,
-    rgb(254, 148, 27),
-    rgb(185, 249, 255),
-    rgb(45, 83, 255)
-  );
 }
 h1 {
   font-size: 3em;

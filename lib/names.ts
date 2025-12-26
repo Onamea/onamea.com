@@ -1,8 +1,12 @@
 import { signal } from "@preact/signals"
-import type { Identity, PrivateKey, Operations, NameKey, Messages, CryptoName } from "@vanice/types"
+import type { Identity, Operations, NameKey, Messages, CryptoName, PrivateKeyDisplay } from "@vanice/types"
 import { keyPairFromPrivateKey, isIdentity, createCreateOperation, createSetOperation, signOperation } from "@vanice/types"
 
-export const names = signal<Identity[]>([])
+export type IdentityWithMessages = Identity & {
+  messages?: Messages
+}
+
+export const names = signal<IdentityWithMessages[]>([])
 export const isFetching = signal(false)
 export const isFetchingByNameKey = signal(false)
 export const isPosting = signal(false)
@@ -10,7 +14,7 @@ export const fetchingError = signal<string>()
 export const fetchingByNameKeyError = signal<string>()
 export const postingError = signal<string>()
 
-const URL = "https://vanice-rest.mikeobank.deno.net/"
+export const URL = "https://vanice-rest.mikeobank.deno.net/"
 
 export const fetchLatestNames = async (): Promise<void> => {
 
@@ -24,9 +28,8 @@ export const fetchLatestNames = async (): Promise<void> => {
     if (response.ok === false) {
       throw new Error("Failed to fetch names")
     }
-    // Convert publicKey to Uint8Array
+
     const identities = await response.json()
-    // Validate identities
     if (identities.every(isIdentity) === false) {
       throw new Error("An invalid identity received from server")
     }
@@ -45,12 +48,16 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
     return identity
   }
 
+  isFetchingByNameKey.value = true
+
   try {
     const response = await fetch(`${ URL }namekey/${ id }`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
+
     const identity = await response.json()
+
     if (isIdentity(identity) === false) {
       throw new Error("Invalid identity received from server")
     }
@@ -63,7 +70,7 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
   }
 }
 
-export const publish = async (cryptoName: CryptoName, privateKey: PrivateKey, nameKey: NameKey, body?: string): Promise<Identity | undefined> => {
+export const publish = async (cryptoName: CryptoName, privateKeyDisplay: PrivateKeyDisplay, nameKey: NameKey, body?: string): Promise<Identity | undefined> => {
 
   const operations: Operations = []
   const createOperation = await createCreateOperation(nameKey)
@@ -73,7 +80,7 @@ export const publish = async (cryptoName: CryptoName, privateKey: PrivateKey, na
     const setOperation = await createSetOperation(nameKey, createOperation.hash, bodyValue)
     operations.push(setOperation)
   }
-  const keyPair = keyPairFromPrivateKey(cryptoName, privateKey)
+  const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyDisplay)
   const promises = operations.map(operation => {
     return signOperation(operation, keyPair, Date.now())
   })
@@ -81,7 +88,7 @@ export const publish = async (cryptoName: CryptoName, privateKey: PrivateKey, na
   return await publishMessages(signedMessages)
 }
 
-export const publishMessages = async (messages: Messages): Promise<Identity | undefined> => {
+export const publishMessages = async (messages: Messages): Promise<IdentityWithMessages | undefined> => {
 
   postingError.value = undefined
   isPosting.value = true

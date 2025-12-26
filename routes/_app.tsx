@@ -1,6 +1,7 @@
+import Header from "../islands/Header.tsx";
 import { define } from "../utils.ts";
 
-export default define.page(function App({ Component }) {
+export default define.page(({ Component }) => {
   return (
     <html>
       <head>
@@ -9,6 +10,7 @@ export default define.page(function App({ Component }) {
         <title>vanice.cloud</title>
       </head>
       <body>
+        <Header />
         <Component />
       </body>
     </html>

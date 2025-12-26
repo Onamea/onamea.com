@@ -2,21 +2,15 @@ import type { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { 
   type Identity, 
-  type PrivateKeyDisplay, 
-  isPrivateKeyDisplay, 
   readCryptoNameFromPrimaryKey, 
   keyPairFromPrivateKey, 
-  fromHex, 
-  publicKeyToPrimaryKey, 
   createSetOperation, 
-  signOperation,
   getLatestHashFromOperations,
-  displayPrivateKey
 } from "@vanice/types"
 import { publishMessages } from "../lib/names.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import useLocalStorageKeyPair, { toKeyPairDisplay } from "../hooks/useLocalStorageKeyPair.ts"
-import { useEffect } from "preact/hooks"
+import { myIdentity } from "../lib/myIdentity.ts"
+import signOperations from "../lib/utils/signOperations.ts";
 
 type Props = {
   identity: Identity
@@ -25,54 +19,28 @@ type Props = {
 const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
 
   const cryptoName = readCryptoNameFromPrimaryKey(identity.primaryKey)
-  const [keyPair, setKeyPair] = useLocalStorageKeyPair()
-
   const showForm = useSignal(false)
-  const privateKeyDisplay = useSignal<PrivateKeyDisplay>()
-  const privateKeyError = useSignal<string>()
+
   const body = useSignal(identity.body ?? "")
   const publishError = useSignal<string>()
-
-
-  useEffect(() => {
-    if (keyPair?.privateKey !== undefined && keyPair?.cryptoName === cryptoName) {
-      const primaryKey = publicKeyToPrimaryKey(cryptoName, fromHex(keyPair.publicKey))
-      if (identity.primaryKey === primaryKey) {
-        privateKeyDisplay.value = displayPrivateKey(cryptoName, fromHex(keyPair.privateKey))
-      }
-    }
-  }, [keyPair, cryptoName, identity.primaryKey])
-
-  const onChangePrivateKey = (event: Event) => {
-    const input = event.target as HTMLInputElement
-    if (isPrivateKeyDisplay(cryptoName, input.value)) {
-      const privateKey = fromHex(input.value)
-      const keyPair = keyPairFromPrivateKey(cryptoName, privateKey)
-      const primaryKey = publicKeyToPrimaryKey(cryptoName, keyPair.publicKey)
-      if (identity.primaryKey === primaryKey) {
-        privateKeyDisplay.value = input.value
-        setKeyPair(toKeyPairDisplay(keyPair))
-      } else {
-        privateKeyError.value = "Private key does not match Identity"
-      }
-    }
-  }
 
   const onSubmit = async (event: Event) => {
     event.preventDefault()
     publishError.value = undefined
-    if (privateKeyDisplay.value !== undefined) {
+    const privateKeyValue = myIdentity.value?.keyPair.privateKeyDisplay
+    if (privateKeyValue !== undefined) {
       const previousHash = getLatestHashFromOperations(identity.operations)
       if (previousHash === undefined) {
         publishError.value = "Cannot determine previous hash for identity"
         return
       }
       const operation = await createSetOperation(identity.id, previousHash, body.value)
-      const keyPair = keyPairFromPrivateKey(cryptoName, fromHex(privateKeyDisplay.value))
-      const signedMessage = await signOperation(operation, keyPair, Date.now())
-      const updatedIdentity = await publishMessages([signedMessage])
+      const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyValue)
+      const operations = [...(myIdentity.value?.operations ?? []), operation]
+      const signedMessages = await signOperations(keyPair, operations)
+      const updatedIdentity = await publishMessages(signedMessages)
       if (updatedIdentity !== undefined) {
-        globalThis.location.assign(`/identity/${ updatedIdentity.id }`)
+        globalThis.location.assign("/me")
       }
     } else {
       publishError.value = "Private key is required"
@@ -80,32 +48,23 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
   }
 
   return (
-    showForm.value === false ? 
+    showForm.value === false ?
       (
         <button type="button" onClick={ () => { showForm.value = true } }>Update Identity</button>
       ) : (
         <form onSubmit={ onSubmit }>
           <h3>Update Identity</h3>
-          { privateKeyDisplay.value === undefined ?
-            <>
-              <label>private key</label>
-              <input type="text" name="privateKey" onChange={ onChangePrivateKey } />
-              { privateKeyError.value && <ErrorDisplay message={privateKeyError.value} /> }
-            </> :
-            <>
-              <label>body</label>
-              <textarea 
-                name="body" 
-                value={ body.value } 
-                onInput={ (e) => body.value = (e.target as HTMLTextAreaElement).value } 
-                rows={ 10 } 
-                cols={ 50 } 
-              />
-              <ErrorDisplay message={ publishError.value } />
-              <button type="submit">Submit</button>
-              <button type="button" onClick={ () => { showForm.value = false } }>Cancel</button>
-            </>
-          }
+          <label>body</label>
+          <textarea 
+            name="body" 
+            value={ body.value } 
+            onInput={ (e) => body.value = (e.target as HTMLTextAreaElement).value } 
+            rows={ 10 } 
+            cols={ 50 } 
+          />
+          <ErrorDisplay message={ publishError.value } />
+          <button type="submit">Submit</button>
+          <button type="button" onClick={ () => { showForm.value = false } }>Cancel</button>
         </form>
       )
   )

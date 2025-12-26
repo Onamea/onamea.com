@@ -4,32 +4,38 @@ import { useMemo } from "preact/hooks"
 import { 
   type PrimaryKey, 
   type Name, 
+  type PrivateKeyDisplay,
   toNameKey, 
-  displayPrivateKey, 
   CryptoName
 } from "@vanice/types"
 import { postingError, publish } from "../lib/names.ts"
+import { myIdentity, identify } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 
 type Props = {
   cryptoName: CryptoName
   primaryKey: PrimaryKey
   name: Name
-  privateKey: Uint8Array
+  privateKeyDisplay: PrivateKeyDisplay
 }
 
-const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKey, cryptoName }) => {
+const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKeyDisplay, cryptoName }) => {
 
   const body = useSignal("")
 
   const nameKey = useMemo(() => toNameKey(name, primaryKey), [name, primaryKey])
-  const privateKeyHex = useMemo(() => displayPrivateKey(cryptoName, privateKey), [cryptoName, privateKey])
 
   const onSubmit = async (event: Event) => {
     event.preventDefault()
-    const identity = await publish(cryptoName, privateKey, nameKey, body?.value)
-    if (identity !== undefined) {
-      globalThis.location.assign(`/identity/${ nameKey }`)
+    if (myIdentity.value === undefined) {
+      await identify(name, privateKeyDisplay)
+      await publish(cryptoName, privateKeyDisplay, nameKey, body.value)
+      globalThis.location.assign("/me")
+    } else {
+      if (confirm("You are identified as a different identity. Have you saved the private key of this identity?")) {
+        await publish(cryptoName, privateKeyDisplay, nameKey, body.value)
+        globalThis.location.assign(`/identity/${ nameKey }`)
+      }
     }
   }
 
@@ -38,7 +44,7 @@ const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKey, c
       ? <ErrorDisplay message={postingError.value} /> 
       : <form onSubmit={ onSubmit }>
           <input type="hidden" name="username" value={ nameKey } />
-          <input type="hidden" name="password" value={ privateKeyHex } />
+          <input type="hidden" name="password" value={ privateKeyDisplay } />
           <textarea
             name="body"
             value={ body.value }
