@@ -1,4 +1,5 @@
 import { type FunctionComponent } from "preact"
+import { useSignal } from "@preact/signals"
 import { type Identity } from "@vanice/types"
 import NameDisplay from "./NameDisplay.tsx"
 
@@ -8,23 +9,34 @@ type Props = {
 
 const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
 
+  const operationsExpanded = useSignal(false)
+
   return (
-    <div class="identity-display">
+    <div>
       <h1><NameDisplay name={ identity.name } primaryKey={ identity.primaryKey } /></h1>
-      <div class="identity-details">
-        <p><label>Id:</label> { identity.id }</p>
-        <p><label>Fingerprint:</label> { identity.fingerprintDisplay }</p>
-        <p><label>Body:</label> { identity.body }</p>
-        <p><label>Tombstone:</label> { String(identity.tombstone) }</p>
-        <h4>Operations:</h4>
-        <ul>
-          { identity.operations.map((operation, index) => (
-            <li key={ index }>
-              <pre>{ JSON.stringify(operation, null, 2) }</pre>
-            </li>
-          )) }
-        </ul>
-      </div>
+      <dl>
+        <div><dd>id</dd><dt>{ identity.id }</dt></div>
+        <div><dd>fingerprint</dd><dt>{ identity.fingerprintDisplay }</dt></div>
+        <div><dd>body</dd><dt>{ identity.body }</dt></div>
+        <div><dd>tombstone</dd><dt>{ String(identity.tombstone) }</dt></div>
+        <div>
+          <dd 
+            onClick={ () => operationsExpanded.value = !operationsExpanded.value } 
+            style="cursor: pointer;"
+          >operations { operationsExpanded.value ? "▶" : "▼" }</dd>
+          <dt>
+            { operationsExpanded.value && (
+              <ul>
+                { identity.operations.map((operation, index) => (
+                  <li key={ index }>
+                    <pre>{ JSON.stringify(operation, null, 2) }</pre>
+                  </li>
+                )) }
+              </ul>
+            )}
+          </dt>
+        </div>
+      </dl>
     </div>
   )
 }

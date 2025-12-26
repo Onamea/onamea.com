@@ -2,8 +2,11 @@ import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import EmojiButton from "./EmojiButton.tsx"
 
-const style = {
+const spanStyle = {
   marginLeft: "16px"
+}
+const pStyle = {
+  display: "inline-block"
 }
 
 type HideFunction = (str: string) => string
@@ -25,6 +28,8 @@ const toHidden = (secret: string, mapping: HideMapping = "chars"): string => {
   const hideFunction: HideFunction = mapping === "chars" ? hideChars : hideWords
   return hideFunction(secret)
 }
+
+
 
 type Props = {
   secret: string
@@ -50,8 +55,8 @@ const SecretDisplay: FunctionComponent<Props> = ({ secret, mapping }) => {
 
   return (
     <>
-      <p class="private-key-display">{ isHidden.value ? toHidden(secret, mapping) : secret }</p>
-      <span style={ style }>
+      <p style={ pStyle }>{ isHidden.value ? toHidden(secret, mapping) : secret }</p>
+      <span style={ spanStyle }>
         <EmojiButton emoji="👁️" onClick={ onClickHidden } />
         <EmojiButton emoji="📋" onClick={ onClickCopy } />
       </span>

@@ -32,13 +32,13 @@ const MiningResult: FunctionComponent<Props> = ({
       <hr/>
       <h1><NameDisplay primaryKey={ primaryKey } name={ name } /></h1>
       <dl>
-        <div><dd>id:</dd><dt>{ toNameKey(name, primaryKey) }</dt></div>
-        <div><dd>fingerprint:</dd><dt>{ fingerprintDisplay }</dt></div>
-        <div><dd>public key:</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
-        { privateKeyDisplay && <div><dd>private key:</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }
-        { mnemonicDisplay && <div><dd>mnemonic:</dd><dt><SecretDisplay secret={ mnemonicDisplay } mapping="words" /></dt></div> }
-        { xPub && <div><dd>xPub:</dd><dt>{ xPub }</dt></div> }
-        { xPub && index && <div><dd>index:</dd><dt>{ index }</dt></div> }
+        <div><dd>id</dd><dt>{ toNameKey(name, primaryKey) }</dt></div>
+        <div><dd>fingerprint</dd><dt>{ fingerprintDisplay }</dt></div>
+        <div><dd>public key</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
+        { privateKeyDisplay && <div><dd>private key</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }
+        { mnemonicDisplay && <div><dd>mnemonic</dd><dt><SecretDisplay secret={ mnemonicDisplay } mapping="words" /></dt></div> }
+        { xPub && <div><dd>xPub</dd><dt>{ xPub }</dt></div> }
+        { xPub && index && <div><dd>index</dd><dt>{ index }</dt></div> }
       </dl>
       <hr/>
       { privateKeyDisplay &&
