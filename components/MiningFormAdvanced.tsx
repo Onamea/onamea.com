@@ -41,7 +41,6 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
       return
     }
     error.value = undefined
-    console.log(canGenerateMnemonic(cryptoName.value), shouldGenerateMnemonic.value)
     await startMining(
       cryptoName.value, 
       nameValue, 
@@ -85,7 +84,7 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
             />
         </div>
       }
-      { canMineFromXPub(cryptoName.value) && 
+      { canMineFromXPub(cryptoName.value) && shouldGenerateMnemonic.value === false && 
         <div>
           <label for="xpub">XPub:</label>
           <input 

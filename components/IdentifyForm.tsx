@@ -4,8 +4,11 @@ import { isFingerprintedName, isMnemonicDisplay, isName, isPrivateKeyDisplay } f
 import { identify } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 
-const IdentifyForm: FunctionComponent = () => {
+const style = {
+  marginTop: "36px"
+}
 
+const IdentifyForm: FunctionComponent = () => {
 
   const name = useSignal("")
   const password = useSignal("")
@@ -34,25 +37,29 @@ const IdentifyForm: FunctionComponent = () => {
 
   return (
     <form onSubmit={ onSubmit }>
-      <label>
-        Name:
+      <div>
+        <label for="name">Name</label>
         <input 
           name="name" 
           value={ name.value } 
           onInput={ e => name.value = (e.target as HTMLInputElement).value } 
         />
-      </label>
-      <label>
-        Private key / Mnemonic:
+      </div>
+      <div>
+        <label>Private key / Mnemonic</label>
         <input 
           type="password" 
           name="password" 
           value={ password.value } 
           onInput={ e => password.value = (e.target as HTMLInputElement).value } 
         />
-      </label>
-      <ErrorDisplay message={ error.value } />
-      <button type="submit">Identify</button>
+      </div>
+      <div>
+        <ErrorDisplay message={ error.value } />
+      </div>
+      <div style={ style }>
+        <button type="submit">Identify</button>
+      </div>
     </form>
   )
 }
