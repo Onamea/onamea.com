@@ -23,7 +23,7 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
           <dd 
             onClick={ () => operationsExpanded.value = !operationsExpanded.value } 
             style="cursor: pointer;"
-          >operations { operationsExpanded.value ? "▶" : "▼" }</dd>
+          >operations { operationsExpanded.value ? "▼" : "▶" }</dd>
           <dt>
             { operationsExpanded.value && (
               <ul>
