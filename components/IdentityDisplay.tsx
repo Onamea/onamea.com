@@ -7,6 +7,10 @@ type Props = {
   identity: Identity
 }
 
+const isEmpty = (arr: Array<unknown> | undefined) : boolean => {
+  return arr === undefined || arr.length === 0
+}
+
 const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
 
   const operationsExpanded = useSignal(false)
@@ -19,6 +23,24 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
         <div><dd>fingerprint</dd><dt>{ identity.fingerprintDisplay }</dt></div>
         <div><dd>body</dd><dt>{ identity.body }</dt></div>
         <div><dd>tombstone</dd><dt>{ String(identity.tombstone) }</dt></div>
+        <div>
+          <dd>sub keys</dd>
+          <dt>
+            { isEmpty(identity.subKeys) ? 
+              <span>-</span> :
+              <ul>{ identity.subKeys?.map(subKey => <li key={ subKey }>{ subKey }</li>) }</ul>
+            }
+          </dt>
+        </div>
+        <div>
+          <dd>referents</dd>
+          <dt>
+            { isEmpty(identity.referents) ? 
+              <span>-</span> :
+              <ul>{ identity.referents?.map(referent => <li key={ referent }>{ referent }</li>) }</ul>
+            }
+          </dt>
+        </div>
         <div>
           <dd 
             onClick={ () => operationsExpanded.value = !operationsExpanded.value } 
