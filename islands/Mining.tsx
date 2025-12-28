@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import { useSignal } from "@preact/signals"
-import { isName } from "@vanice/types"
+import { isNameOrFingerprintedName } from "@vanice/types"
 import MiningFormAdvanced from "../components/MiningFormAdvanced.tsx"
 import MiningProgress from "../components/MiningProgress.tsx"
 import MiningResult from "../components/MiningResult.tsx"
@@ -17,7 +17,7 @@ const Mining: FunctionComponent<Props> = ({ name }) => {
   const useEffectHasRun = useSignal(false)
 
   useEffect(() => {
-    if (isName(name)) {
+    if (isNameOrFingerprintedName(name)) {
       try {
         startMining("Ed25519", name)
       } catch (error) {

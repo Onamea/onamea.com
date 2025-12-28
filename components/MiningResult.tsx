@@ -3,7 +3,9 @@ import { toNameKey, displayPublicKey, displayPrivateKey } from "@vanice/types"
 import NameDisplay from "./NameDisplay.tsx"
 import SecretDisplay from "./SecretDisplay.tsx"
 import PublishForm from "./PublishForm.tsx"
+import PublishSubKeyForm from "./PublishSubKeyForm.tsx"
 import { type MiningResult as Props, clearResult } from "../lib/mining.ts"
+import { myIdentity } from "../lib/myIdentity.ts"
 
 const MiningResult: FunctionComponent<Props> = ({ 
   cryptoName, 
@@ -43,7 +45,12 @@ const MiningResult: FunctionComponent<Props> = ({
       <hr/>
       { privateKeyDisplay &&
         <>
-          <PublishForm primaryKey={ primaryKey } name={ name } privateKeyDisplay={ privateKeyDisplay } cryptoName={ cryptoName } />
+          { myIdentity.value === undefined &&
+            <PublishForm primaryKey={ primaryKey } name={ name } privateKeyDisplay={ privateKeyDisplay } cryptoName={ cryptoName } />
+          }
+          { myIdentity.value !== undefined &&
+            <PublishSubKeyForm primaryKey={ primaryKey } name={ name } />
+          }
           <hr/>
         </>
       }

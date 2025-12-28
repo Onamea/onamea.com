@@ -113,7 +113,8 @@ export const publish = async (operation: Operation | Operations): Promise<boolea
   const keyPair = myIdentity.value.keyPair
   const operations = [...myIdentity.value.operations, ...(Array.isArray(operation) ? operation : [operation])]
   const nonSignedOperations = operations.filter(operation => {
-    myIdentity.value?.messages.findIndex(({ raw }) => raw === toRawOperation(operation)) === -1
+    if (myIdentity.value === undefined) return true
+    return myIdentity.value.messages.findIndex(({ raw }) => raw === toRawOperation(operation)) === -1
   })
   const signedMessages = await signOperations(keyPair, nonSignedOperations)
   const updatedIdentity = await publishMessages(signedMessages)

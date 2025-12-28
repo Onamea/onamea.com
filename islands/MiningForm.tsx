@@ -1,6 +1,6 @@
 import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { isName } from "@vanice/types"
+import { isNameOrFingerprintedName } from "@vanice/types"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
 
 const MiningForm: FunctionComponent = () => {
@@ -15,7 +15,7 @@ const MiningForm: FunctionComponent = () => {
       error.value = "Provide a name"
       return
     }
-    if (isName(nameValue) === false) {
+    if (isNameOrFingerprintedName(nameValue) === false) {
       error.value = `${ nameValue } is not a valid name`
       return
     }

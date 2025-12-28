@@ -1,13 +1,14 @@
 import { signal } from "@preact/signals"
-import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, MnemonicDisplay } from "@vanice/types"
+import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, MnemonicDisplay, FingerprintedName } from "@vanice/types"
 import { 
   displayFingerprint, 
   publicKeyToPrimaryKey, 
   primaryKeyToFingerprint, 
   isCryptoName, 
   isName, 
-  toPrimaryName, 
-  isXPub
+  isXPub,
+  isNameOrFingerprintedName,
+  parseFingerprintedName
 } from "@vanice/types"
 import { createWorkerPool } from "@vanice/vanice-pool"
 
@@ -34,7 +35,7 @@ export const result = signal<MiningResult>()
 
 const url = new URL("/workers/worker.js", import.meta.url)
 
-export const startMining = async (cryptoName: CryptoName, name: Name, shouldGenerateMnemonic = false, xPub?: XPub) => {
+export const startMining = async (cryptoName: CryptoName, fingerprintedName: Name | FingerprintedName, shouldGenerateMnemonic = false, xPub?: XPub) => {
 
   if (isMining.value) {
     error.value = "Mining is already in progress"
@@ -43,24 +44,30 @@ export const startMining = async (cryptoName: CryptoName, name: Name, shouldGene
   if (isCryptoName(cryptoName) === false) {
     error.value = `Unsupported crypto name: ${ cryptoName }`
   }
-  if (isName(name) === false) {
-    error.value = `Invalid name: ${ name }`
+  if (isNameOrFingerprintedName(fingerprintedName) === false) {
+    error.value = `Invalid name: ${ fingerprintedName }`
   }
   if (xPub !== undefined && isXPub(xPub) === false) {
     error.value = `Invalid XPub: ${ xPub }`
   }
 
+  let name: Name 
+  let fingerprintDisplay: FingerprintDisplay | undefined = undefined
+  if (isName(fingerprintedName)) {
+    name = fingerprintedName
+  } else {
+    [name, fingerprintDisplay] = parseFingerprintedName(fingerprintedName) 
+  }
+
   isMining.value = true
   nameToMine.value = name
-  const primaryName = toPrimaryName(name)
-
-  console.log(xPub === undefined ? shouldGenerateMnemonic : false)
 
   try {
 
     const r = await createWorkerPool(
       cryptoName, 
-      primaryName, 
+      name, 
+      fingerprintDisplay,
       undefined, 
       url, 
       ({ totalAttempts, attemptsPerSecond }) => { 

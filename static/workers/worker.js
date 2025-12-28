@@ -4,7 +4,7 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Crypto_Ed25519.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Crypto_Ed25519.ts
 var Crypto_Ed25519_exports = {};
 __export(Crypto_Ed25519_exports, {
   INDEX: () => INDEX,
@@ -15,8 +15,8 @@ __export(Crypto_Ed25519_exports, {
   SIGNATURE_LENGTH: () => SIGNATURE_LENGTH,
   appendCryptoIndexToPrimaryChars: () => appendCryptoIndexToPrimaryChars2,
   derivePublicKeyFromXPub: () => derivePublicKeyFromXPub2,
-  displayPrivateKey: () => displayPrivateKey2,
-  displayPublicKey: () => displayPublicKey2,
+  displayPrivateKey: () => displayPrivateKey3,
+  displayPublicKey: () => displayPublicKey3,
   displaySignature: () => displaySignature2,
   generateKeyPair: () => generateKeyPair2,
   isPrimaryKey: () => isPrimaryKey2,
@@ -1079,17 +1079,17 @@ var sha512 = /* @__PURE__ */ createHasher(() => new SHA512());
 // deno:https://jsr.io/@noble/hashes/1.8.0/src/sha512.ts
 var sha5122 = sha512;
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/isNumber.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/isNumber.ts
 var isNumber_default = (value) => {
   return typeof value === "number" && !isNaN(value) && isFinite(value);
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/isString.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/isString.ts
 var isString_default = (value) => {
   return typeof value === "string";
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/CryptoNames.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/CryptoNames.ts
 var cryptoNames = [
   "Ed25519",
   "ECDSA",
@@ -6401,10 +6401,10 @@ var HDKey = class _HDKey {
   }
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/isArray.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/isArray.ts
 var isArray_default = (value) => Array.isArray(value);
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Mnemonic.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Mnemonic.ts
 var displayMnemonic = (mnemonic) => {
   return mnemonic.join(" ");
 };
@@ -6422,7 +6422,7 @@ var mnemonicToPrivateKey = (mnemonic) => {
   return privateKey;
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/Hex.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/Hex.ts
 var isHexString = (value) => {
   return isString_default(value) && value.length % 2 === 0 && /^[0-9a-f]*$/.test(value);
 };
@@ -6438,13 +6438,21 @@ var fromHex = (hex) => {
   return new Uint8Array(bytes);
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/KeyPair.ts
-var displayKey = toHex;
-var fromKeyDisplay = fromHex;
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/KeyPair.ts
+var displayPublicKey = (publicKey) => {
+  return toHex(publicKey);
+};
+var displayPrivateKey = (privateKey) => {
+  return toHex(privateKey);
+};
+var fromPrivateKeyDisplay = (privateKeyDisplay) => {
+  return fromHex(privateKeyDisplay);
+};
 var displayKeyPair = (keyPair) => {
-  const mnemonicDisplay = keyPair.mnemonic !== void 0 ? displayMnemonic(keyPair.mnemonic) : void 0;
-  const publicKeyDisplay = displayKey(keyPair.publicKey);
-  const privateKeyDisplay = displayKey(keyPair.privateKey);
+  const { mnemonic, publicKey, privateKey } = keyPair;
+  const mnemonicDisplay = mnemonic !== void 0 ? displayMnemonic(mnemonic) : void 0;
+  const publicKeyDisplay = displayPublicKey(publicKey);
+  const privateKeyDisplay = displayPrivateKey(privateKey);
   return {
     ...keyPair,
     publicKeyDisplay,
@@ -6453,7 +6461,7 @@ var displayKeyPair = (keyPair) => {
   };
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/characters.json
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/characters.json
 var characters_default = [
   { index: 0, primary: "0", secondary: "Oo_", fingerprint: [{ character: "\u{1F600}", codePoints: ["U+1F600"] }, { character: "\u{1F60A}", codePoints: ["U+1F60A"] }] },
   { index: 1, primary: "1", secondary: "IiLl", fingerprint: [{ character: "\u2712\uFE0F", codePoints: ["U+2712", "U+FE0F"] }, { character: "\u2712", codePoints: ["U+2712"] }] },
@@ -6489,7 +6497,7 @@ var characters_default = [
   { index: 31, primary: "Y", secondary: "y", fingerprint: [{ character: "\u23F0", codePoints: ["U+23F0"] }] }
 ];
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/characters.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/characters.ts
 var createCharsString = (key) => {
   return characters_default.map((c) => c[key]).join("");
 };
@@ -6504,7 +6512,7 @@ var isPrimaryChars = (value) => {
   return isString_default(value) && primaryCharsRegex.test(value);
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/getUTF8StringLength.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/getUTF8StringLength.ts
 var getUTF8StringLength_default = (str) => {
   const segmenter = new Intl.Segmenter("en", {
     granularity: "grapheme"
@@ -6514,7 +6522,7 @@ var getUTF8StringLength_default = (str) => {
   ].length;
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/Base32.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/Base32.ts
 var isBase32 = (value) => {
   return isNumber_default(value) && Number.isInteger(value) && value >= 0 && value < 32;
 };
@@ -6582,7 +6590,10 @@ var decode = (str, alphabet2) => {
   });
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/codec.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/codec.ts
+var hashToFingerprint = (hash) => {
+  return uint8ArrayToBase32Array(hash);
+};
 var publicKeyToPrimaryChars = (publicKey) => {
   return encode(uint8ArrayToBase32Array(publicKey), primaryAlphabet);
 };
@@ -6590,7 +6601,7 @@ var primaryCharsToUint8Array = (chars) => {
   return base32ToUint8Array(decode(chars, primaryAlphabet));
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/isUint8Array.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/isUint8Array.ts
 var isUint8Array = (value) => {
   return value instanceof Uint8Array;
 };
@@ -6598,7 +6609,7 @@ var isUint8ArrayOfLength = (value, length) => {
   return isUint8Array(value) && value.length === length;
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/last.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/last.ts
 var last_default = (s, n = 0) => {
   if (n > s.length) throw new Error("Index out of range");
   const i = Math.abs(n);
@@ -6609,16 +6620,21 @@ var last_default = (s, n = 0) => {
   }
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/Hash.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/digest.ts
+var digest_default = async (arr) => {
+  return new Uint8Array(await crypto.subtle.digest("SHA-256", new Uint8Array(arr)));
+};
+
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/Hash.ts
 var isHash = (value) => {
   return isHexString(value) && value.length === 64;
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Crypto.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Crypto.ts
 var isPublicKey = (length) => (value) => {
   return isUint8ArrayOfLength(value, length);
 };
-var displayPublicKey = (publicKey) => {
+var displayPublicKey2 = (publicKey) => {
   return toHex(publicKey);
 };
 var isPublicKeyDisplay = (length) => (value) => {
@@ -6627,7 +6643,7 @@ var isPublicKeyDisplay = (length) => (value) => {
 var isPrivateKey = (length) => (value) => {
   return isUint8ArrayOfLength(value, length);
 };
-var displayPrivateKey = (privateKey) => {
+var displayPrivateKey2 = (privateKey) => {
   return toHex(privateKey);
 };
 var isPrivateKeyDisplay = (length) => (value) => {
@@ -6740,17 +6756,17 @@ var keyPairFromMnemonic = (keyPairFromPrivateKey6) => (mnemonic) => {
   });
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/toPrimaryKeyLength.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/toPrimaryKeyLength.ts
 var toPrimaryKeyLength = (bytesLength) => {
   return toBase32Length(bytesLength) + 1;
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/utils/toBuffer.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/utils/toBuffer.ts
 var toBuffer_default = (arr) => {
   return new Uint8Array(arr).buffer;
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Crypto_Ed25519.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Crypto_Ed25519.ts
 var NAME = "Ed25519";
 var INDEX = cryptoNames.indexOf(NAME);
 var PUBLIC_KEY_LENGTH = 32;
@@ -6761,10 +6777,10 @@ if (hashes.sha512 === void 0) {
   hashes.sha512 = sha5122;
 }
 var isPublicKey2 = isPublicKey(PUBLIC_KEY_LENGTH);
-var displayPublicKey2 = displayPublicKey;
+var displayPublicKey3 = displayPublicKey2;
 var isPublicKeyDisplay2 = isPublicKeyDisplay(PUBLIC_KEY_LENGTH);
 var isPrivateKey2 = isPrivateKey(PRIVATE_KEY_LENGTH);
-var displayPrivateKey2 = displayPrivateKey;
+var displayPrivateKey3 = displayPrivateKey2;
 var isPrivateKeyDisplay2 = isPrivateKeyDisplay(PRIVATE_KEY_LENGTH);
 var publicKeyToPrimaryKey2 = publicKeyToPrimaryKey(PUBLIC_KEY_LENGTH, INDEX);
 var primaryKeyToPublicKey2 = primaryKeyToPublicKey(PRIMARY_KEY_LENGTH, INDEX);
@@ -6811,17 +6827,17 @@ var generateKeyPair2 = async () => {
 };
 var keyPairFromPrivateKey_ = keyPairFromPrivateKey(NAME, getPublicKey);
 var keyPairFromPrivateKey2 = (privateKeyDisplay) => {
-  const privateKey = isHexString(privateKeyDisplay) ? fromKeyDisplay(privateKeyDisplay) : privateKeyDisplay;
+  const privateKey = isHexString(privateKeyDisplay) ? fromPrivateKeyDisplay(privateKeyDisplay) : privateKeyDisplay;
   const keyPair = keyPairFromPrivateKey_(privateKey.slice(-32));
   return {
     ...keyPair,
     privateKey,
-    privateKeyDisplay: displayPrivateKey2(privateKey)
+    privateKeyDisplay: displayPrivateKey3(privateKey)
   };
 };
 var keyPairFromMnemonic2 = keyPairFromMnemonic(keyPairFromPrivateKey2);
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Crypto_ECDSA.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Crypto_ECDSA.ts
 var Crypto_ECDSA_exports = {};
 __export(Crypto_ECDSA_exports, {
   INDEX: () => INDEX2,
@@ -6834,8 +6850,8 @@ __export(Crypto_ECDSA_exports, {
   appendCryptoIndexToPrimaryChars: () => appendCryptoIndexToPrimaryChars3,
   appendFlagToPrimaryChars: () => appendFlagToPrimaryChars,
   derivePublicKeyFromXPub: () => derivePublicKeyFromXPub3,
-  displayPrivateKey: () => displayPrivateKey3,
-  displayPublicKey: () => displayPublicKey3,
+  displayPrivateKey: () => displayPrivateKey4,
+  displayPublicKey: () => displayPublicKey4,
   displaySignature: () => displaySignature3,
   fromPublicKeyUncompressed: () => fromPublicKeyUncompressed,
   generateKeyPair: () => generateKeyPair3,
@@ -7589,7 +7605,7 @@ var wNAF3 = (n) => {
   };
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Crypto_ECDSA.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Crypto_ECDSA.ts
 var NAME2 = "ECDSA";
 var INDEX2 = cryptoNames.indexOf(NAME2);
 var PRIVATE_KEY_LENGTH2 = 32;
@@ -7604,10 +7620,10 @@ var flags = [
   2,
   3
 ];
-var displayPublicKey3 = displayPublicKey;
+var displayPublicKey4 = displayPublicKey2;
 var isPublicKeyDisplay3 = isPublicKeyDisplay(PUBLIC_KEY_LENGTH2);
 var isPrivateKey3 = isPrivateKey(PRIVATE_KEY_LENGTH2);
-var displayPrivateKey3 = displayPrivateKey;
+var displayPrivateKey4 = displayPrivateKey2;
 var isPrivateKeyDisplay3 = isPrivateKeyDisplay(PRIVATE_KEY_LENGTH2);
 var isSignature3 = isSignature(SIGNATURE_LENGTH2);
 var displaySignature3 = displaySignature(SIGNATURE_LENGTH2);
@@ -7729,7 +7745,7 @@ var primaryKeyToPublicKey3 = (primaryKey) => {
   return prependFlagToPublicKeyX(primaryCharsToUint8Array(primaryChars2), flag);
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Crypto_Schnorr.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Crypto_Schnorr.ts
 var Crypto_Schnorr_exports = {};
 __export(Crypto_Schnorr_exports, {
   INDEX: () => INDEX3,
@@ -7740,8 +7756,8 @@ __export(Crypto_Schnorr_exports, {
   SIGNATURE_LENGTH: () => SIGNATURE_LENGTH3,
   appendCryptoIndexToPrimaryChars: () => appendCryptoIndexToPrimaryChars4,
   derivePublicKeyFromXPub: () => derivePublicKeyFromXPub4,
-  displayPrivateKey: () => displayPrivateKey4,
-  displayPublicKey: () => displayPublicKey4,
+  displayPrivateKey: () => displayPrivateKey5,
+  displayPublicKey: () => displayPublicKey5,
   displaySignature: () => displaySignature4,
   generateKeyPair: () => generateKeyPair4,
   isPrimaryKey: () => isPrimaryKey4,
@@ -7767,10 +7783,10 @@ var PRIVATE_KEY_LENGTH3 = 32;
 var SIGNATURE_LENGTH3 = 64;
 var PRIMARY_KEY_LENGTH3 = toPrimaryKeyLength(PUBLIC_KEY_LENGTH3);
 var isPublicKey4 = isPublicKey(PUBLIC_KEY_LENGTH3);
-var displayPublicKey4 = displayPublicKey;
+var displayPublicKey5 = displayPublicKey2;
 var isPublicKeyDisplay4 = isPublicKeyDisplay(PUBLIC_KEY_LENGTH3);
 var isPrivateKey4 = isPrivateKey(PRIVATE_KEY_LENGTH3);
-var displayPrivateKey4 = displayPrivateKey;
+var displayPrivateKey5 = displayPrivateKey2;
 var isPrivateKeyDisplay4 = isPrivateKeyDisplay(PRIVATE_KEY_LENGTH3);
 var publicKeyToPrimaryKey4 = publicKeyToPrimaryKey(PUBLIC_KEY_LENGTH3, INDEX3);
 var primaryKeyToPublicKey4 = primaryKeyToPublicKey(PRIMARY_KEY_LENGTH3, INDEX3);
@@ -7787,11 +7803,17 @@ var keyPairFromPrivateKey4 = keyPairFromPrivateKey(NAME3, getPublicKey3);
 var keyPairFromMnemonic4 = keyPairFromMnemonic(keyPairFromPrivateKey4);
 var derivePublicKeyFromXPub4 = derivePublicKeyFromXPub(NAME3);
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/Cryptos.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/Cryptos.ts
 var cryptos = {
   Ed25519: Crypto_Ed25519_exports,
   ECDSA: Crypto_ECDSA_exports,
   Schnorr: Crypto_Schnorr_exports
+};
+var isPublicKeyByCryptoName = (name, value) => {
+  return cryptos[name].isPublicKey(value);
+};
+var displayPublicKeyByCryptoName = (name, publicKey) => {
+  return cryptos[name].displayPublicKey(publicKey);
 };
 var publicKeyToPrimaryKey5 = (name, publicKey) => {
   return cryptos[name].publicKeyToPrimaryKey(publicKey);
@@ -7803,14 +7825,29 @@ var derivePublicKeyFromXPub5 = (name, xpub, index) => {
   return cryptos[name].derivePublicKeyFromXPub(xpub, index);
 };
 
-// deno:https://jsr.io/@vanice/types/0.2.14/lib/crypto/XPub.ts
+// deno:https://jsr.io/@vanice/types/0.2.20/Fingerprint.ts
+var publicKeyToFingerprint = async (publicKey) => {
+  return hashToFingerprint(await digest_default(publicKey));
+};
+
+// deno:https://jsr.io/@vanice/types/0.2.20/lib/crypto/XPub.ts
 var maxIndex = 2 ** 31 - 1;
+
+// deno:https://jsr.io/@vanice/types/0.2.20/Crypto.ts
+var displayPublicKey6 = (publicKey) => {
+  for (const cryptoName of cryptoNames) {
+    if (isPublicKeyByCryptoName(cryptoName, publicKey)) {
+      return displayPublicKeyByCryptoName(cryptoName, publicKey);
+    }
+  }
+  throw new Error("Invalid PublicKey");
+};
 
 // src/generateKeyPair.ts
 var generateKeyPair6 = async (cryptoName, shouldGenerateMnemonic = false, xPub, index) => {
   if (xPub !== void 0 && index !== void 0) {
     const publicKey = derivePublicKeyFromXPub5(cryptoName, xPub, index);
-    const publicKeyDisplay = displayKey(publicKey);
+    const publicKeyDisplay = displayPublicKey6(publicKey);
     return {
       cryptoName,
       publicKey,
@@ -7821,11 +7858,17 @@ var generateKeyPair6 = async (cryptoName, shouldGenerateMnemonic = false, xPub, 
   }
 };
 
+// src/lib/utils/equalArrays.ts
+var equalArrays_default = (arr1, arr2) => {
+  return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
+};
+
 // src/worker.ts
 var worker = self;
 worker.onmessage = async (event) => {
-  const { search, cryptoName, shouldGenerateMnemonic, xPub, offset, maxAttempts } = event.data;
-  const searchLength = search.length;
+  const { primaryName, fingerprint, cryptoName, shouldGenerateMnemonic, xPub, offset, maxAttempts } = event.data;
+  const searchLength = primaryName.length;
+  const fingerprintLength = fingerprint?.length;
   let match = false;
   let totalAttempts = 0;
   while (match === false) {
@@ -7834,7 +7877,13 @@ worker.onmessage = async (event) => {
     const { publicKey } = keyPair;
     const primaryKey = publicKeyToPrimaryKey5(cryptoName, publicKey);
     const value = primaryKey.substring(0, searchLength);
-    if (value === search) {
+    const isNameMatch = value === primaryName;
+    let isFingerprintMatch = true;
+    if (fingerprint !== void 0) {
+      const fullFingerprint = await publicKeyToFingerprint(publicKey);
+      isFingerprintMatch = equalArrays_default(fullFingerprint.slice(0, fingerprintLength), fingerprint);
+    }
+    if (isNameMatch && isFingerprintMatch) {
       worker.postMessage({
         success: true,
         ...keyPair,
