@@ -6,10 +6,11 @@ type Props = {
 }
 
 const style = {
+  filter: "grayscale(100%)",
+  fontSize: "36px",
+  cursor: "pointer",
   background: "none",
   border: "none",
-  cursor: "pointer",
-  fontSize: "36px",
   padding: "0"
 }
 

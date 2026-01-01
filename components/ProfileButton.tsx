@@ -10,6 +10,7 @@ const style = {
 }
 
 const spanStyle = { 
+  filter: "grayscale(100%)",
   width: "1em",
   marginRight: "12px"
 }
