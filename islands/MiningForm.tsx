@@ -2,11 +2,14 @@ import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { isNameOrFingerprintedName } from "@vanice/types"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
+import { myIdentity } from "../lib/myIdentity.ts"
 
 const MiningForm: FunctionComponent = () => {
 
   const name = useSignal<string>()
   const error = useSignal<string>()
+
+  const isIdentified = myIdentity.value !== undefined
 
   const handleSubmit = (e: SubmitEvent) => {
     e.preventDefault()
@@ -25,7 +28,7 @@ const MiningForm: FunctionComponent = () => {
 
   return (
     <div class="py-4">
-      <h3>Claim your name</h3>
+      <h3>{ isIdentified ? "Create a sub key" : "Claim your name" }</h3>
       <form onSubmit={ handleSubmit }>
         <div>
           <input 

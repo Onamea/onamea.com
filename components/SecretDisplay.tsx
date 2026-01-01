@@ -57,8 +57,8 @@ const SecretDisplay: FunctionComponent<Props> = ({ secret, mapping }) => {
     <>
       <p style={ pStyle }>{ isHidden.value ? toHidden(secret, mapping) : secret }</p>
       <span style={ spanStyle }>
-        <EmojiButton emoji="👁️" onClick={ onClickHidden } />
-        <EmojiButton emoji="📋" onClick={ onClickCopy } />
+        <EmojiButton emoji="👁️" title="Show / Hide" onClick={ onClickHidden } />
+        <EmojiButton emoji="📋" title="Copy to clipboard" onClick={ onClickCopy } />
       </span>
     </>
   )

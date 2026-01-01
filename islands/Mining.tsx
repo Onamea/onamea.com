@@ -7,6 +7,7 @@ import MiningProgress from "../components/MiningProgress.tsx"
 import MiningResult from "../components/MiningResult.tsx"
 import { isMining, nameToMine, progress, result, error, startMining } from "../lib/mining.ts"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
+import { myIdentity } from "../lib/myIdentity.ts"
 
 type Props = {
   name?: string
@@ -15,6 +16,8 @@ type Props = {
 const Mining: FunctionComponent<Props> = ({ name }) => {
 
   const useEffectHasRun = useSignal(false)
+
+  const isIdentified = myIdentity.value !== undefined
 
   useEffect(() => {
     if (isNameOrFingerprintedName(name)) {
@@ -29,7 +32,7 @@ const Mining: FunctionComponent<Props> = ({ name }) => {
 
   return (
     <div class="py-4">
-      <h1>Mining</h1>
+      <h1>{ isIdentified ? "Mine sub key" : "Mining" }</h1>
       { useEffectHasRun.value && isMining.value === false && result.value === undefined && <MiningFormAdvanced /> }
       { isMining.value && nameToMine.value && progress.value && <MiningProgress nameToMine={ nameToMine.value } progress={ progress.value } /> }
       <ErrorDisplay message={error.value} />
