@@ -33,7 +33,7 @@ export const myIdentity = signal<MyIdentity>()
 const buildMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, operations?: Operations, messages: Messages = []): Promise<MyIdentity> => {
   const [primaryKey, name] = parseNameKey(id)
   const [fingerprintedName] = await primaryKeyToFingerprintedName(primaryKey, name)
-  const identity = await buildIdentityFromOperations(operations ?? [await createCreateOperation(id)], id)
+  const identity = await buildIdentityFromOperations(operations ?? [await createCreateOperation(id)], id, true)
   return {
     ...identity,
     fingerprintedName,

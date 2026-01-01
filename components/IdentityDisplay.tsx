@@ -42,6 +42,15 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
           </dt>
         </div>
         <div>
+          <dd>relations</dd>
+          <dt>
+            { isEmpty(identity.relations) ? 
+              <span>-</span> :
+              <ul>{ identity.relations?.map(relation => <li key={ relation }>{ relation }</li>) }</ul>
+            }
+          </dt>
+        </div>
+        <div>
           <dd 
             onClick={ () => operationsExpanded.value = !operationsExpanded.value } 
             style="cursor: pointer;"
