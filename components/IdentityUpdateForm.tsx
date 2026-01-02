@@ -1,5 +1,5 @@
 import type { FunctionComponent } from "preact"
-import { computed, useSignal } from "@preact/signals"
+import { useSignal } from "@preact/signals"
 import { 
   type Identity, 
   type OperationName,
@@ -7,7 +7,7 @@ import {
   type Operations,
   readCryptoNameFromPrimaryKey, 
   keyPairFromPrivateKey, 
-  getLatestHashFromOperations,
+  getPreviousHash,
   operations,
   isId,
   isIdentityKey,
@@ -21,7 +21,7 @@ import {
   createDenounceOperation,
   createUnrelateOperation,
   createRevertOperation,
-  isHash,
+  isHash
 } from "@vanice/types"
 import { publishMessages } from "../lib/names.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
@@ -33,7 +33,7 @@ type Props = {
 }
 
 const nonCreateOperations = operations.filter(operation => operation !== "CREATE")
-const operationWithBody = operations.filter(operation => ["SET", "GRANT", "VOUCH", "RELATE", "REVERT"].includes(operation))
+const targetHashOperations: OperationName[] = ["REVOKE", "DENOUNCE", "UNRELATE", "REVERT"] as const
 
 const getOperations = async (): Promise<Operations> => {
   const currentOperations = myIdentity.value?.operations
@@ -89,7 +89,6 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
   const cryptoName = readCryptoNameFromPrimaryKey(identity.primaryKey)
   const showForm = useSignal(false)
   const operationName = useSignal<OperationName>("SET")
-  const showTextarea = computed(() => operationWithBody.includes(operationName.value))
 
   const body = useSignal(identity.body ?? "")
   const publishError = useSignal<string>()
@@ -99,14 +98,24 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
     publishError.value = undefined
     const privateKeyValue = myIdentity.value?.keyPair.privateKeyDisplay
     if (privateKeyValue !== undefined) {
-      const previousHash = getLatestHashFromOperations(identity.operations)
+      const bodyValue = body.value.trim()
+      const isTargetHashOperation = targetHashOperations.includes(operationName.value)
+      let targetHash: Hash | undefined = undefined
+      if (isTargetHashOperation) {
+        targetHash = bodyValue
+        if (isHash(targetHash) === false) {
+          publishError.value = "Invalid hash"
+          return
+        }
+      }
+      const previousHash = getPreviousHash(identity.operations, operationName.value, targetHash)
       if (previousHash === undefined) {
-        publishError.value = "Cannot determine previous hash for identity"
+        publishError.value = `Cannot determine previous hash for ${ operationName.value } Operation on Identity`
         return
       }
       try {
         const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyValue)
-        const operation = await createOperation(operationName.value, identity.id, previousHash, body.value.trim())
+        const operation = await createOperation(operationName.value, identity.id, previousHash, bodyValue)
         const operations = [...await getOperations(), operation]
         const signedMessages = await signOperations(keyPair, operations)
         const updatedIdentity = await publishMessages(signedMessages)
@@ -141,15 +150,13 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
             )) }
           </select>
           <label>body</label>
-          { showTextarea.value && 
-            <textarea 
-              name="body" 
-              value={ body.value } 
-              onInput={ (e) => body.value = (e.target as HTMLTextAreaElement).value } 
-              rows={ 10 } 
-              cols={ 50 } 
-            />
-          }
+          <textarea 
+            name="body" 
+            value={ body.value } 
+            onInput={ (e) => body.value = (e.target as HTMLTextAreaElement).value } 
+            rows={ 10 } 
+            cols={ 50 } 
+          />
           <ErrorDisplay message={ publishError.value } />
           <button type="submit">Submit</button>
           <button type="button" onClick={ () => { showForm.value = false } }>Cancel</button>
