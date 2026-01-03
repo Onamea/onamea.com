@@ -3,7 +3,7 @@ import { useSignal } from "@preact/signals"
 import { isFingerprintedName, isMnemonicDisplay, isName, isPrivateKeyDisplay, parsePathString } from "@vanice/types"
 import { fetchMyIdentity, identify, identifyBySubKey } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import { fetchByFingerprintedName } from "../lib/names.ts"
+import { fetchByFingerprintedName, IDENTITY_KEY_DOMAIN } from "../lib/names.ts"
 
 const style = {
   marginTop: "36px"
@@ -45,7 +45,12 @@ const IdentifyForm: FunctionComponent = () => {
       }
       const [nameKey, keyPairDisplay] = identified
       const identities = await fetchByFingerprintedName(identityInPath)
-      const identity = identities.find(({ subKeys }) => subKeys.includes(nameKey))
+      console.log(identities)
+      const identity = identities.find(({ subKeys }) => {
+        return subKeys.find(
+          ({ subKey, domain }) => subKey === nameKey && (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
+        )
+      })
       if (identity === undefined) {
         error.value = `No identity (${ identityInPath }) found with SubKey: ${ nameInPath }`
         return

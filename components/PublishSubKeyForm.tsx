@@ -9,6 +9,7 @@ import {
 import { postingError } from "../lib/names.ts"
 import { myIdentity, publish } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
+import { IDENTITY_KEY_DOMAIN } from "../lib/names.ts"
 
 type Props = {
   primaryKey: PrimaryKey
@@ -25,7 +26,12 @@ const PublishSubKeyForm: FunctionComponent<Props> = ({ primaryKey, name }) => {
       throw new Error("Not identified")
     } else {
       if (confirm("Have you saved the private key for this sub key?")) {
-        const grantOperation = await createGrantOperation(myIdentity.value.id, myIdentity.value.operations[0].hash, nameKey)
+        const grantOperation = await createGrantOperation(
+          myIdentity.value.id, 
+          myIdentity.value.operations[0].hash, 
+          nameKey,
+          IDENTITY_KEY_DOMAIN
+        )
         await publish(grantOperation)
         globalThis.location.assign("/me")
       }

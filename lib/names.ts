@@ -9,6 +9,7 @@ export type IdentityWithMessages = Identity & {
 }
 
 export const URL = "https://vanice-rest.mikeobank.deno.net/"
+export const IDENTITY_KEY_DOMAIN = "vanice.cloud"
 
 export const names = signal<IdentityWithMessages[]>([])
 export const isFetching = signal(false)
