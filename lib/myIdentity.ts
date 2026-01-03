@@ -1,4 +1,4 @@
-import type { FingerprintedName, Identity, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, Operations, Operation, Messages } from "@vanice/types"
+import type { FingerprintedName, Identity, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, Operations, Operation, Messages, NameKey } from "@vanice/types"
 import { 
   primaryKeyToFingerprintedName, 
   identify as identifyByName,
@@ -74,6 +74,18 @@ export const identify = async (identifyWithName: FingerprintedName, privateKeyDi
     const myIdentity = await buildMyIdentity(id, keyPair)
     persist(myIdentity)
     return true
+  } catch (err) {
+    console.error("Identification error: ", err)
+    return false
+  }
+}
+
+export const identifyBySubKey = async (subKey: FingerprintedName, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay): Promise<[NameKey, KeyPairDisplay] | false> => {
+  if (myIdentity.value !== undefined) {
+    throw new Error("Already identified")
+  }
+  try {
+    return await identifyByName(subKey, privateKeyDisplay)
   } catch (err) {
     console.error("Identification error: ", err)
     return false

@@ -1,20 +1,36 @@
 import { signal } from "@preact/signals"
-import type { Identity, Operations, NameKey, Messages, CryptoName, PrivateKeyDisplay } from "@vanice/types"
+import type { Identity, Operations, NameKey, Messages, CryptoName, PrivateKeyDisplay, FingerprintedName } from "@vanice/types"
 import { keyPairFromPrivateKey, isIdentity, createCreateOperation, createSetOperation, signOperation } from "@vanice/types"
+
+type Plural<T> = T | T[] 
 
 export type IdentityWithMessages = Identity & {
   messages?: Messages
 }
 
+export const URL = "https://vanice-rest.mikeobank.deno.net/"
+
 export const names = signal<IdentityWithMessages[]>([])
 export const isFetching = signal(false)
 export const isFetchingByNameKey = signal(false)
+export const isFetchingByFingerprintedName = signal(false)
 export const isPosting = signal(false)
 export const fetchingError = signal<string>()
 export const fetchingByNameKeyError = signal<string>()
+export const fetchingByFingerprintedNameError = signal<string>()
 export const postingError = signal<string>()
 
-export const URL = "https://vanice-rest.mikeobank.deno.net/"
+const addToNames = (identity: Plural<IdentityWithMessages>) => {
+  const identities = Array.isArray(identity) ? identity : [identity]
+  for (const identity of identities) {
+    const existingIndex = names.value.findIndex(({ id }) => id === identity.id)
+    if (existingIndex !== -1) {
+      names.value[existingIndex] = identity
+    } else {
+      names.value.push(identity)
+    }
+  }
+}
 
 export const fetchLatestNames = async (): Promise<void> => {
 
@@ -33,7 +49,7 @@ export const fetchLatestNames = async (): Promise<void> => {
     if (identities.every(isIdentity) === false) {
       throw new Error("An invalid identity received from server")
     }
-    names.value = identities
+    addToNames(identities)
   } catch (err) {
     fetchingError.value = err instanceof Error ? err.message : "An error occurred"
   } finally {
@@ -61,13 +77,44 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
     if (isIdentity(identity) === false) {
       throw new Error("Invalid identity received from server")
     }
-    names.value.push(identity)
+    addToNames(identity)
     return identity
   } catch (err) {
     fetchingByNameKeyError.value = err instanceof Error ? err.message : "An error occurred"
   } finally {
     isFetchingByNameKey.value = false
   }
+  return undefined
+}
+
+export const fetchByFingerprintedName = async (fingerprintedName: FingerprintedName): Promise<Identity[]> => {
+
+  isFetchingByFingerprintedName.value = true
+
+  try {
+
+    const response = await fetch(`${ URL }name/${ fingerprintedName }`)
+    if (response.ok === false) {
+      throw new Error("Failed to fetch by nameKey")
+    }
+
+    const identities = await response.json()
+
+    if (identities.every(isIdentity) === false) {
+      throw new Error("Invalid identities received from server")
+    }
+
+    addToNames(identities)
+
+    return identities
+
+  } catch (err) {
+    fetchingByFingerprintedNameError.value = err instanceof Error ? err.message : "An error occurred"
+  } finally {
+    isFetchingByFingerprintedName.value = false
+  }
+
+  return []
 }
 
 export const publish = async (cryptoName: CryptoName, privateKeyDisplay: PrivateKeyDisplay, nameKey: NameKey, body?: string): Promise<Identity | undefined> => {
