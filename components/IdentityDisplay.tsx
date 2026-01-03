@@ -28,7 +28,11 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
           <dt>
             { isEmpty(identity.subKeys) ? 
               <span>-</span> :
-              <ul>{ identity.subKeys?.map(subKey => <li key={ subKey }>{ subKey }</li>) }</ul>
+              <ul>{ 
+                identity.subKeys?.map(
+                  ({ subKey, domain }) => 
+                    <li key={ subKey }>{ subKey } { domain ? `(${ domain })` : "" }</li>) 
+              }</ul>
             }
           </dt>
         </div>
