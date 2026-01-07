@@ -1,4 +1,4 @@
-import { type FunctionComponent } from "preact"
+import type { FunctionComponent } from "preact"
 
 const About: FunctionComponent = () => {
   return (
@@ -9,6 +9,9 @@ const About: FunctionComponent = () => {
       </p>
       <p class="href-wrap">
         <a href="https://github.com/mikeobank/vanice/blob/main/vanice.md">https://github.com/mikeobank/vanice/blob/main/vanice.md</a>
+      </p>
+      <p>
+        Bitcoin donations: bc1q7tgk2ecfgsqle35lyfxzgnkqe56txts0jsznzc
       </p>
     </div>
   )
