@@ -41,7 +41,7 @@ export const fetchLatestNames = async (): Promise<void> => {
   isFetching.value = true
 
   try {
-    const response = await fetch(URL)
+    const response = await fetch(`${ URL }identities`)
     if (response.ok === false) {
       throw new Error("Failed to fetch names")
     }
@@ -68,7 +68,7 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
   isFetchingByNameKey.value = true
 
   try {
-    const response = await fetch(`${ URL }namekey/${ id }`)
+    const response = await fetch(`${ URL }identities/id/${ id }`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
@@ -94,7 +94,7 @@ export const fetchByFingerprintedName = async (fingerprintedName: FingerprintedN
 
   try {
 
-    const response = await fetch(`${ URL }name/${ fingerprintedName }`)
+    const response = await fetch(`${ URL }identities/name/${ fingerprintedName }`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }

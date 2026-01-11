@@ -97,7 +97,7 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
   try {
 
     isFetching.value = true
-    const response = await fetch(`${ URL }namekey/${ id }`)
+    const response = await fetch(`${ URL }identities/id/${ id }`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
