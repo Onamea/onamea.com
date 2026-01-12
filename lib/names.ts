@@ -8,7 +8,7 @@ export type IdentityWithMessages = Identity & {
   messages?: Messages
 }
 
-export const URL = "https://vanice-rest.mikeobank.deno.net/"
+export const URL = "https://api.vanice.cloud/"
 export const IDENTITY_KEY_DOMAIN = "vanice.cloud"
 
 export const names = signal<IdentityWithMessages[]>([])
