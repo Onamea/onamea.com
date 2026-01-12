@@ -34,9 +34,8 @@
     "jsr:@std/path@^1.1.1": "1.1.2",
     "jsr:@std/semver@1": "1.0.5",
     "jsr:@std/uuid@^1.0.7": "1.0.9",
-    "jsr:@vanice/types@~0.2.21": "0.2.27",
-    "jsr:@vanice/types@~0.2.27": "0.2.27",
-    "jsr:@vanice/vanice-pool@~0.2.21": "0.2.21",
+    "jsr:@vanice/types@~0.2.32": "0.2.32",
+    "jsr:@vanice/vanice-pool@~0.2.33": "0.2.33",
     "npm:@babel/core@^7.28.0": "7.28.4",
     "npm:@babel/preset-react@^7.27.1": "7.27.1_@babel+core@7.28.4",
     "npm:@mjackson/node-fetch-server@0.7": "0.7.0",
@@ -209,8 +208,8 @@
         "jsr:@std/bytes"
       ]
     },
-    "@vanice/types@0.2.27": {
-      "integrity": "8789e780eb8506d5ae5316f097d23d97aeef61df129db1d76363982706eb85b9",
+    "@vanice/types@0.2.32": {
+      "integrity": "abdd4f0718e548bc7e95775230d9db7dec17567d1ee15b8f298e17a8aa0bbd12",
       "dependencies": [
         "jsr:@noble/ed25519",
         "jsr:@noble/hashes@^1.8.0",
@@ -219,10 +218,10 @@
         "jsr:@scure/bip39"
       ]
     },
-    "@vanice/vanice-pool@0.2.21": {
-      "integrity": "b249c366d30eb8e43ebbb5a6c39a6ed3c99d825e46e8cdecf5d0f6e2a084685b",
+    "@vanice/vanice-pool@0.2.33": {
+      "integrity": "d2538a0c239c6de960df2213fc74e3a6dffc667a846e29e5f2db8c3a820f8aed",
       "dependencies": [
-        "jsr:@vanice/types@~0.2.21"
+        "jsr:@vanice/types"
       ]
     }
   },
@@ -1216,8 +1215,8 @@
     "dependencies": [
       "jsr:@fresh/core@^2.1.1",
       "jsr:@fresh/plugin-vite@^1.0.4",
-      "jsr:@vanice/types@~0.2.27",
-      "jsr:@vanice/vanice-pool@~0.2.21",
+      "jsr:@vanice/types@~0.2.32",
+      "jsr:@vanice/vanice-pool@~0.2.33",
       "npm:@preact/signals@^2.3.1",
       "npm:preact-router@^4.1.2",
       "npm:preact@^10.27.2",

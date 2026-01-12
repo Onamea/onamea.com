@@ -33,6 +33,8 @@ export const error = signal<string>()
 export const progress = signal(initialProgress)
 export const result = signal<MiningResult>()
 
+const abortFunc = signal<() => void>()
+
 const url = new URL("/workers/worker.js", import.meta.url)
 
 export const startMining = async (cryptoName: CryptoName, fingerprintedName: Name | FingerprintedName, shouldGenerateMnemonic = false, xPub?: XPub) => {
@@ -64,7 +66,7 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
 
   try {
 
-    const r = await createWorkerPool(
+    const { promise, abort } = createWorkerPool(
       cryptoName, 
       name, 
       fingerprintDisplay,
@@ -77,6 +79,8 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
       xPub === undefined ? shouldGenerateMnemonic : false,
       xPub
     )
+    abortFunc.value = abort
+    const r = await promise
 
     if (r !== undefined) {
       console.log("Mining result:", r)
@@ -94,12 +98,14 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
       }
     }
     stopMining()
-  } catch (err) {
-    error.value = (err as Error).message
+    abortFunc.value = undefined
+  } catch (_) {
+    abortFunc.value = undefined
   }
 }
 
 export const stopMining = () => {
+  abortFunc.value?.()
   isMining.value = false
   progress.value = initialProgress
   nameToMine.value = undefined
