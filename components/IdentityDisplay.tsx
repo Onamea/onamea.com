@@ -21,7 +21,7 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
       <dl>
         <div><dd>id</dd><dt>{ identity.id }</dt></div>
         <div><dd>fingerprint</dd><dt>{ identity.fingerprintDisplay }</dt></div>
-        <div><dd>body</dd><dt>{ identity.body }</dt></div>
+        <div><dd>body</dd><dt>{ identity.body ?? "-" }</dt></div>
         <div><dd>tombstone</dd><dt>{ String(identity.tombstone) }</dt></div>
         <div>
           <dd>sub keys</dd>
