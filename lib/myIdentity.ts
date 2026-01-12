@@ -27,8 +27,9 @@ type MyIdentity = Identity & {
 
 const key = "MY_IDENTITY_DATA"
 
-const isFetching = signal(false)
+export const isFetching = signal(false)
 export const myIdentity = signal<MyIdentity>()
+export const isSyncedToAPI = signal(false)
 
 const buildMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, operations?: Operations, messages: Messages = []): Promise<MyIdentity> => {
   const [primaryKey, name] = parseNameKey(id)
@@ -99,7 +100,7 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
     isFetching.value = true
     const response = await fetch(`${ URL }identities/id/${ id }`)
     if (response.ok === false) {
-      throw new Error("Failed to fetch by nameKey")
+      throw new Error("Failed to fetch by id")
     }
 
     const identity = await response.json()
@@ -109,6 +110,7 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
 
     myIdentity.value = await buildMyIdentity(id, keyPair, identity.operations, (identity as IdentityWithMessages).messages)
     persist(myIdentity.value)
+    isSyncedToAPI.value = true
   } catch (err) {
     console.error(err)
   } finally {
@@ -116,14 +118,14 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
   }
 }
 
-export const publish = async (operation: Operation | Operations): Promise<boolean> => {
+export const publish = async (operation?: Operation | Operations): Promise<boolean> => {
 
   if (myIdentity.value === undefined) {
     throw new Error("Not identified")
   }
 
   const keyPair = myIdentity.value.keyPair
-  const operations = [...myIdentity.value.operations, ...(Array.isArray(operation) ? operation : [operation])]
+  const operations = [...myIdentity.value.operations, ...(operation !== undefined ? (Array.isArray(operation) ? operation : [operation]) : [])]
   const nonSignedOperations = operations.filter(operation => {
     if (myIdentity.value === undefined) return true
     return myIdentity.value.messages.findIndex(({ raw }) => raw === toRawOperation(operation)) === -1
@@ -133,6 +135,7 @@ export const publish = async (operation: Operation | Operations): Promise<boolea
 
   if (updatedIdentity !== undefined) {
     myIdentity.value = await buildMyIdentity(updatedIdentity.id, keyPair, updatedIdentity.operations, updatedIdentity.messages)
+    isSyncedToAPI.value = true
     return true
   } else {
     return false

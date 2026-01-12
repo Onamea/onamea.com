@@ -25,7 +25,7 @@ import {
 } from "@vanice/types"
 import { publishMessages } from "../lib/names.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import { myIdentity } from "../lib/myIdentity.ts"
+import { isSyncedToAPI, myIdentity, publish } from "../lib/myIdentity.ts"
 import signOperations from "../lib/utils/signOperations.ts"
 
 type Props = {
@@ -93,6 +93,14 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
   const body = useSignal(identity.body ?? "")
   const publishError = useSignal<string>()
 
+  const isPublishing = useSignal(false)
+  const onClickPublish = async () => {
+    if (isPublishing.value === true) return
+    isPublishing.value = true
+    await publish()
+    isPublishing.value = false
+  }
+
   const onSubmit = async (event: Event) => {
     event.preventDefault()
     publishError.value = undefined
@@ -133,7 +141,9 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
   }
 
   return (
-    showForm.value === false ?
+    <>
+    { isSyncedToAPI.value === false && <button type="button" onClick={ onClickPublish }>Publish</button> }
+    { showForm.value === false ?
       (
         <button type="button" onClick={ () => { showForm.value = true } }>Update Identity</button>
       ) : (
@@ -162,6 +172,8 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
           <button type="button" onClick={ () => { showForm.value = false } }>Cancel</button>
         </form>
       )
+    }
+    </>
   )
 }
 
