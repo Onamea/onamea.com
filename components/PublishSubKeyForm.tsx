@@ -1,15 +1,10 @@
 import { type FunctionComponent } from "preact"
 import { useMemo } from "preact/hooks"
-import { 
-  type PrimaryKey, 
-  type Name, 
-  toNameKey, 
-  createGrantOperation
-} from "@vanice/types"
-import { postingError } from "../lib/names.ts"
-import { myIdentity, publish } from "../lib/myIdentity.ts"
+import { type PrimaryKey, type Name, toNameKey, createGrantOperation } from "@vanice/types"
+import { postingError } from "../lib/identities.ts"
+import { myIdentity, updateMyIdentity } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import { IDENTITY_KEY_DOMAIN } from "../lib/names.ts"
+import { IDENTITY_KEY_DOMAIN } from "../lib/identities.ts"
 
 type Props = {
   primaryKey: PrimaryKey
@@ -32,7 +27,7 @@ const PublishSubKeyForm: FunctionComponent<Props> = ({ primaryKey, name }) => {
           nameKey,
           IDENTITY_KEY_DOMAIN
         )
-        await publish(grantOperation)
+        await updateMyIdentity(grantOperation)
         globalThis.location.assign("/me")
       }
     }

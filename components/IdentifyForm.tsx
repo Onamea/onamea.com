@@ -1,9 +1,8 @@
 import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { isFingerprintedName, isMnemonicDisplay, isName, isPrivateKeyDisplay, parsePathString } from "@vanice/types"
-import { fetchMyIdentity, identify, identifyBySubKey } from "../lib/myIdentity.ts"
+import { isMnemonicDisplay, isPrivateKeyDisplay } from "@vanice/types"
+import { identifyByPathStringified } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import { fetchByFingerprintedName, IDENTITY_KEY_DOMAIN } from "../lib/names.ts"
 
 const style = {
   marginTop: "36px"
@@ -24,11 +23,7 @@ const IdentifyForm: FunctionComponent = () => {
     const nameValue = name.value.trim()
     const passwordValue = password.value.trim()
 
-    const path = parsePathString(nameValue)
-    const nameInPath = path.length > 1 ? path[path.length - 1] : path[0]
-    const identityInPath = path.length > 1 ? path[0] : undefined
-
-    if (isName(nameInPath) === false && isFingerprintedName(nameInPath) === false) {
+    if (nameValue === "") {
       error.value = "Invalid name"
       return
     }
@@ -36,34 +31,14 @@ const IdentifyForm: FunctionComponent = () => {
       error.value = "Invalid private key or mnemonic"
       return
     }
-    
-    if (identityInPath !== undefined) {
-      const identified = await identifyBySubKey(nameInPath, passwordValue)
-      if (identified === false) {
-        error.value = `Identification with SubKey: ${nameInPath} failed`
-        return
-      }
-      const [nameKey, keyPairDisplay] = identified
-      const identities = await fetchByFingerprintedName(identityInPath)
-      console.log(identities)
-      const identity = identities.find(({ subKeys }) => {
-        return subKeys.find(
-          ({ subKey, domain }) => subKey === nameKey && (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
-        )
-      })
-      if (identity === undefined) {
-        error.value = `No identity (${ identityInPath }) found with SubKey: ${ nameInPath }`
-        return
-      }
-      await fetchMyIdentity(identity.id, keyPairDisplay)
-    } else {
-      const identified = await identify(nameInPath, passwordValue)
-      if (identified === false) {
-        error.value = "Identification failed"
-        return
-      }
+
+    try {
+      await identifyByPathStringified(nameValue, passwordValue)
+      globalThis.location.href = "/me"
+    } catch (err) {
+      console.error(err)
+      error.value = `Identification failed: ${ (err as Error).message }`
     }
-    globalThis.location.href = "/me"
   }
 
   return (

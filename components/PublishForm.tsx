@@ -5,11 +5,12 @@ import {
   type PrimaryKey, 
   type Name, 
   type PrivateKeyDisplay,
+  type CryptoName,
   toNameKey, 
-  CryptoName
+  keyPairFromPrivateKey
 } from "@vanice/types"
-import { postingError, publish } from "../lib/names.ts"
-import { myIdentity, identify } from "../lib/myIdentity.ts"
+import { postingError } from "../lib/identities.ts"
+import { myIdentity, initMyIdentity } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 
 type Props = {
@@ -28,14 +29,11 @@ const PublishForm: FunctionComponent<Props> = ({ primaryKey, name, privateKeyDis
   const onSubmit = async (event: Event) => {
     event.preventDefault()
     if (myIdentity.value === undefined) {
-      await identify(name, privateKeyDisplay)
-      await publish(cryptoName, privateKeyDisplay, nameKey, body.value)
+      const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyDisplay)
+      await initMyIdentity(nameKey, keyPair, body.value)
       globalThis.location.assign("/me")
     } else {
-      if (confirm("You are identified as a different identity. Have you saved the private key of this identity?")) {
-        await publish(cryptoName, privateKeyDisplay, nameKey, body.value)
-        globalThis.location.assign(`/identity/${ nameKey }`)
-      }
+      throw new Error("Already identified")
     }
   }
 

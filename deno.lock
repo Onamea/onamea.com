@@ -34,7 +34,8 @@
     "jsr:@std/path@^1.1.1": "1.1.2",
     "jsr:@std/semver@1": "1.0.5",
     "jsr:@std/uuid@^1.0.7": "1.0.9",
-    "jsr:@vanice/types@~0.2.32": "0.2.32",
+    "jsr:@vanice/types@~0.2.32": "0.2.40",
+    "jsr:@vanice/types@~0.2.40": "0.2.40",
     "jsr:@vanice/vanice-pool@~0.2.33": "0.2.33",
     "npm:@babel/core@^7.28.0": "7.28.4",
     "npm:@babel/preset-react@^7.27.1": "7.27.1_@babel+core@7.28.4",
@@ -208,8 +209,8 @@
         "jsr:@std/bytes"
       ]
     },
-    "@vanice/types@0.2.32": {
-      "integrity": "abdd4f0718e548bc7e95775230d9db7dec17567d1ee15b8f298e17a8aa0bbd12",
+    "@vanice/types@0.2.40": {
+      "integrity": "15aa0d3c3b59d7b2a836ebe9b07285a639b2d04fbcfa46cdd1b230798da0860e",
       "dependencies": [
         "jsr:@noble/ed25519",
         "jsr:@noble/hashes@^1.8.0",
@@ -221,7 +222,7 @@
     "@vanice/vanice-pool@0.2.33": {
       "integrity": "d2538a0c239c6de960df2213fc74e3a6dffc667a846e29e5f2db8c3a820f8aed",
       "dependencies": [
-        "jsr:@vanice/types"
+        "jsr:@vanice/types@~0.2.32"
       ]
     }
   },
@@ -1215,7 +1216,7 @@
     "dependencies": [
       "jsr:@fresh/core@^2.1.1",
       "jsr:@fresh/plugin-vite@^1.0.4",
-      "jsr:@vanice/types@~0.2.32",
+      "jsr:@vanice/types@~0.2.40",
       "jsr:@vanice/vanice-pool@~0.2.33",
       "npm:@preact/signals@^2.3.1",
       "npm:preact-router@^4.1.2",

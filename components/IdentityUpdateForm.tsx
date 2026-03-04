@@ -4,14 +4,10 @@ import {
   type Identity, 
   type OperationName,
   type Hash,
-  type Operations,
-  readCryptoNameFromPrimaryKey, 
-  keyPairFromPrivateKey, 
   getPreviousHash,
   operations,
   isId,
   isIdentityKey,
-  createCreateOperation,
   createSetOperation, 
   createGrantOperation,
   createVouchOperation,
@@ -23,10 +19,8 @@ import {
   createRevertOperation,
   isHash
 } from "@vanice/types"
-import { publishMessages } from "../lib/names.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import { isSyncedToAPI, myIdentity, publish } from "../lib/myIdentity.ts"
-import signOperations from "../lib/utils/signOperations.ts"
+import { isSyncedToAPI, myIdentity, updateMyIdentity, publishMyIdentity } from "../lib/myIdentity.ts"
 
 type Props = {
   identity: Identity
@@ -34,18 +28,6 @@ type Props = {
 
 const nonCreateOperations = operations.filter(operation => operation !== "CREATE")
 const targetHashOperations: OperationName[] = ["REVOKE", "DENOUNCE", "UNRELATE", "REVERT"] as const
-
-const getOperations = async (): Promise<Operations> => {
-  const currentOperations = myIdentity.value?.operations
-  if (currentOperations === undefined || currentOperations.length === 0) {
-    if (myIdentity.value?.id === undefined) {
-      throw new Error("Cannot create CreateOperation: myIdentity id is undefined")
-    }
-    const createOperation = await createCreateOperation(myIdentity.value.id)
-    return [createOperation]
-  }
-  return currentOperations
-}
 
 const createOperation = async (operationName: OperationName, id: Identity["id"], previousHash: Hash, body?: string) => {
   switch (operationName) {
@@ -86,7 +68,6 @@ const createOperation = async (operationName: OperationName, id: Identity["id"],
 
 const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
 
-  const cryptoName = readCryptoNameFromPrimaryKey(identity.primaryKey)
   const showForm = useSignal(false)
   const operationName = useSignal<OperationName>("SET")
 
@@ -97,7 +78,7 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
   const onClickPublish = async () => {
     if (isPublishing.value === true) return
     isPublishing.value = true
-    await publish()
+    await publishMyIdentity()
     isPublishing.value = false
   }
 
@@ -122,19 +103,13 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
         return
       }
       try {
-        const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyValue)
         const operation = await createOperation(operationName.value, identity.id, previousHash, bodyValue)
-        const operations = [...await getOperations(), operation]
-        const signedMessages = await signOperations(keyPair, operations)
-        const updatedIdentity = await publishMessages(signedMessages)
-        if (updatedIdentity !== undefined) {
-          globalThis.location.assign("/me")
-        }
+        await updateMyIdentity(operation)
+        globalThis.location.assign("/me")
       } catch (error) {
         publishError.value = (error as Error).message
         return
       }
-      
     } else {
       publishError.value = "Private key is required"
     }

@@ -1,31 +1,27 @@
-import type { FingerprintedName, Identity, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, Operations, Operation, Messages, NameKey } from "@vanice/types"
+import type { FingerprintedName, Identity, IdentityWithMessages, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, Operations, Messages, NameKey, PathStringified, Operation } from "@vanice/types"
 import { 
   primaryKeyToFingerprintedName, 
   identify as identifyByName,
   parseNameKey,
   createCreateOperation,
-  parseUint8ArrayObject,
   isIdentity,
   buildIdentityFromOperations,
-  toRawOperation
+  parseAmbiguousPath,
+  getUnsignedOperations,
+  createSetOperation,
+  isFingerprintedName,
+  isNameKey
 } from "@vanice/types"
 import { signal } from "@preact/signals"
-import { IdentityWithMessages, publishMessages, URL } from "./names.ts"
-import signOperations from "./utils/signOperations.ts"
+import { fetchByFingerprintedName, URL, IDENTITY_KEY_DOMAIN, publishOperations } from "./identities.ts"
+import { Plural, toPlural } from "./utils/plural.ts"
+import { clear, persist, read } from "./myIdentityPersistence.ts"
+import { extendSubKeys } from "./subKeys.ts"
 
-type Uint8ArrayObject = Record<string, number>
-type KeyPairJson = KeyPairDisplay & {
-  publicKey: Uint8ArrayObject
-  privateKey: Uint8ArrayObject
-}
-
-type MyIdentity = Identity & {
-  messages: Messages
+export type MyIdentity = IdentityWithMessages & {
   fingerprintedName: FingerprintedName
   keyPair: KeyPairDisplay
 }
-
-const key = "MY_IDENTITY_DATA"
 
 export const isFetching = signal(false)
 export const myIdentity = signal<MyIdentity>()
@@ -43,54 +39,86 @@ const buildMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, oper
   }
 }
 
-const parseKeyPair = (keyPairJson: KeyPairJson): KeyPairDisplay => {
-  const publicKey = parseUint8ArrayObject(keyPairJson.publicKey)
-  const privateKey = parseUint8ArrayObject(keyPairJson.privateKey)
-  return { ...keyPairJson, publicKey, privateKey }
-}
-
-const read = (): MyIdentity | undefined => {
-  const item = globalThis.localStorage.getItem(key)
-  if (item === null) return undefined
-  const json = JSON.parse(item)
-  json.keyPair = parseKeyPair(json.keyPair)
-  json.publicKey = json.keyPair.publicKey
-  return json
-}
-
-const persist = (myIdentity: MyIdentity) => {
-  globalThis.localStorage.setItem(key, JSON.stringify(myIdentity))
-}
-
-export const clear = () => {
-  globalThis.localStorage.removeItem(key)
-}
-
-export const identify = async (identifyWithName: FingerprintedName, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay): Promise<boolean> => {
+export const initMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, body?: Identity["body"], shouldPublish = true) => {
   if (myIdentity.value !== undefined) {
     throw new Error("Already identified")
   }
-  try {
-    const [id, keyPair] = await identifyByName(identifyWithName, privateKeyDisplay)
-    const myIdentity = await buildMyIdentity(id, keyPair)
-    persist(myIdentity)
-    return true
-  } catch (err) {
-    console.error("Identification error: ", err)
-    return false
+  const createOperation = await createCreateOperation(id)
+  const operations: Operations = [createOperation]
+  if (body !== undefined) {
+    const setOperation = await createSetOperation(id, createOperation.hash, body)
+    operations.push(setOperation)
+  }
+  const nextMyIdentity = await buildMyIdentity(id, keyPair, operations)
+  persist(nextMyIdentity)
+  myIdentity.value = nextMyIdentity
+  if (shouldPublish) {
+    await publishMyIdentity()
   }
 }
 
-export const identifyBySubKey = async (subKey: FingerprintedName, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay): Promise<[NameKey, KeyPairDisplay] | false> => {
+export const setMyIdentity = async (identity: IdentityWithMessages, keyPair: KeyPairDisplay, shouldPublish = true) => {
   if (myIdentity.value !== undefined) {
     throw new Error("Already identified")
   }
-  try {
-    return await identifyByName(subKey, privateKeyDisplay)
-  } catch (err) {
-    console.error("Identification error: ", err)
-    return false
+  const nextMyIdentity = await buildMyIdentity(identity.id, keyPair, identity.operations, identity.messages)
+  persist(nextMyIdentity)
+  myIdentity.value = nextMyIdentity
+  if (shouldPublish) {
+    await publishMyIdentity()
   }
+}
+
+export const updateMyIdentity = async (operation: Plural<Operation>, shouldPublish = true) => {
+  if (myIdentity.value === undefined) {
+    throw new Error("Not identified")
+  }
+  const operations = toPlural(operation)
+  const nextOperations = myIdentity.value.operations.concat(operations)
+  const nextMyIdentity = await buildMyIdentity(myIdentity.value.id, myIdentity.value.keyPair, nextOperations)
+  myIdentity.value = nextMyIdentity
+  persist(nextMyIdentity)
+  if (shouldPublish) {
+    await publishMyIdentity()
+  }
+}
+
+export const clearMyIdentity = () => {
+  clear()
+  myIdentity.value = undefined
+  isSyncedToAPI.value = false
+}
+
+export const identifyByPathStringified = async (pathStringified: PathStringified, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay): Promise<[NameKey, KeyPairDisplay]> => {
+
+  if (myIdentity.value !== undefined) {
+    throw new Error("Already identified")
+  }
+
+  const [id, keyPair] = await identifyByName(pathStringified, privateKeyDisplay)
+  let nameKey: NameKey
+
+  if (isFingerprintedName(id)) {
+    const path = parseAmbiguousPath(pathStringified)
+    const subKeyInPath = path.elements[1].id
+    const identities = await fetchByFingerprintedName(id)
+    const extendedIdentities = await Promise.all(identities.map(async (identity) => ({
+        ...identity,
+        subKeys: await extendSubKeys(identity.subKeys)
+      })))
+    const identity = extendedIdentities.find(({ subKeys }) => subKeys.find(
+      ({ fingerprintedName, domain }) => fingerprintedName.startsWith(subKeyInPath) && (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
+    ))
+    if (identity === undefined) {
+      throw new Error(`No identity (${ id}) found with SubKey: ${ subKeyInPath }`)
+    }
+    nameKey = identity.id
+  } else if (isNameKey(id)) {
+    nameKey = id
+  }
+  myIdentity.value = await buildMyIdentity(nameKey!, keyPair)
+  persist(myIdentity.value)
+  return [myIdentity.value.id, keyPair]
 }
 
 export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay) => {
@@ -118,23 +146,16 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
   }
 }
 
-export const publish = async (operation?: Operation | Operations): Promise<boolean> => {
+export const publishMyIdentity = async (): Promise<boolean> => {
 
   if (myIdentity.value === undefined) {
     throw new Error("Not identified")
   }
 
-  const keyPair = myIdentity.value.keyPair
-  const operations = [...myIdentity.value.operations, ...(operation !== undefined ? (Array.isArray(operation) ? operation : [operation]) : [])]
-  const nonSignedOperations = operations.filter(operation => {
-    if (myIdentity.value === undefined) return true
-    return myIdentity.value.messages.findIndex(({ raw }) => raw === toRawOperation(operation)) === -1
-  })
-  const signedMessages = await signOperations(keyPair, nonSignedOperations)
-  const updatedIdentity = await publishMessages(signedMessages)
-
+  const unsignedOperations = getUnsignedOperations(myIdentity.value)
+  const updatedIdentity = await publishOperations(unsignedOperations, myIdentity.value.keyPair)
   if (updatedIdentity !== undefined) {
-    myIdentity.value = await buildMyIdentity(updatedIdentity.id, keyPair, updatedIdentity.operations, updatedIdentity.messages)
+    myIdentity.value = await buildMyIdentity(updatedIdentity.id, myIdentity.value.keyPair, updatedIdentity.operations, updatedIdentity.messages)
     isSyncedToAPI.value = true
     return true
   } else {

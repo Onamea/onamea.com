@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import NameDisplay from "../components/NameDisplay.tsx"
-import { fetchLatestNames, names, isFetching, fetchingError } from "../lib/names.ts"
+import { fetchLatestNames, names, isFetching, fetchingError } from "../lib/identities.ts"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
 
 const LatestNames: FunctionComponent = () => {

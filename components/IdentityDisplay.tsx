@@ -1,7 +1,9 @@
 import { type FunctionComponent } from "preact"
+import { useEffect } from "preact/hooks"
 import { useSignal } from "@preact/signals"
 import { type Identity } from "@vanice/types"
 import NameDisplay from "./NameDisplay.tsx"
+import { type ExtendedSubKey, extendSubKeys } from "../lib/subKeys.ts"
 
 type Props = {
   identity: Identity
@@ -13,7 +15,15 @@ const isEmpty = (arr: Array<unknown> | undefined) : boolean => {
 
 const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
 
+  const subKeys = useSignal<ExtendedSubKey[]>([])
   const operationsExpanded = useSignal(false)
+
+  useEffect(() => {
+    ;(async () => {
+      subKeys.value = await extendSubKeys(identity.subKeys)
+    })()
+  }, [identity.subKeys])
+
 
   return (
     <div>
@@ -29,9 +39,12 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
             { isEmpty(identity.subKeys) ? 
               <span>-</span> :
               <ul>{ 
-                identity.subKeys?.map(
-                  ({ subKey, domain }) => 
-                    <li key={ subKey }>{ subKey } { domain ? `(${ domain })` : "" }</li>) 
+                subKeys.value.map(
+                  ({ subKey, domain, fingerprintedName }) => (
+                    <li key={ subKey }>
+                      <span title={ subKey }>{ fingerprintedName }</span> { domain ? `(${ domain })` : "" }
+                    </li>
+                  ))
               }</ul>
             }
           </dt>

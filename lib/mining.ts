@@ -83,7 +83,6 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
     const r = await promise
 
     if (r !== undefined) {
-      console.log("Mining result:", r)
 
       const primaryKey = publicKeyToPrimaryKey(cryptoName, r.publicKey)
       const fingerprint = await primaryKeyToFingerprint(primaryKey)

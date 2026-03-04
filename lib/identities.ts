@@ -1,12 +1,7 @@
 import { signal } from "@preact/signals"
-import type { Identity, Operations, NameKey, Messages, CryptoName, PrivateKeyDisplay, FingerprintedName } from "@vanice/types"
-import { keyPairFromPrivateKey, isIdentity, createCreateOperation, createSetOperation, signOperation } from "@vanice/types"
-
-type Plural<T> = T | T[] 
-
-export type IdentityWithMessages = Identity & {
-  messages?: Messages
-}
+import type { Identity, IdentityWithMessages, Operations, FingerprintedName, KeyPair } from "@vanice/types"
+import { isIdentity, isIdentityWithMessages, signOperations } from "@vanice/types"
+import { type Plural, toPlural } from "./utils/plural.ts"
 
 export const URL = "https://api.vanice.cloud/"
 export const IDENTITY_KEY_DOMAIN = "vanice.cloud"
@@ -22,11 +17,11 @@ export const fetchingByFingerprintedNameError = signal<string>()
 export const postingError = signal<string>()
 
 const addToNames = (identity: Plural<IdentityWithMessages>) => {
-  const identities = Array.isArray(identity) ? identity : [identity]
+  const identities = toPlural(identity)
   for (const identity of identities) {
-    const existingIndex = names.value.findIndex(({ id }) => id === identity.id)
-    if (existingIndex !== -1) {
-      names.value[existingIndex] = identity
+    const index = names.value.findIndex(({ id }) => id === identity.id)
+    if (index !== -1) {
+      names.value[index] = identity
     } else {
       names.value.push(identity)
     }
@@ -74,8 +69,7 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
     }
 
     const identity = await response.json()
-
-    if (isIdentity(identity) === false) {
+    if (isIdentityWithMessages(identity) === false) {
       throw new Error("Invalid identity received from server")
     }
     addToNames(identity)
@@ -100,15 +94,11 @@ export const fetchByFingerprintedName = async (fingerprintedName: FingerprintedN
     }
 
     const identities = await response.json()
-
     if (identities.every(isIdentity) === false) {
       throw new Error("Invalid identities received from server")
     }
-
     addToNames(identities)
-
     return identities
-
   } catch (err) {
     fetchingByFingerprintedNameError.value = err instanceof Error ? err.message : "An error occurred"
   } finally {
@@ -118,25 +108,9 @@ export const fetchByFingerprintedName = async (fingerprintedName: FingerprintedN
   return []
 }
 
-export const publish = async (cryptoName: CryptoName, privateKeyDisplay: PrivateKeyDisplay, nameKey: NameKey, body?: string): Promise<Identity | undefined> => {
-
-  const operations: Operations = []
-  const createOperation = await createCreateOperation(nameKey)
-  operations.push(createOperation)
-  const bodyValue = body?.trim()
-  if (bodyValue !== undefined && bodyValue !== "") {
-    const setOperation = await createSetOperation(nameKey, createOperation.hash, bodyValue)
-    operations.push(setOperation)
-  }
-  const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyDisplay)
-  const promises = operations.map(operation => {
-    return signOperation(operation, keyPair, Date.now())
-  })
-  const signedMessages = await Promise.all(promises)
-  return await publishMessages(signedMessages)
-}
-
-export const publishMessages = async (messages: Messages): Promise<IdentityWithMessages | undefined> => {
+export const publishOperations = async (operations: Operations, keyPair: KeyPair): Promise<IdentityWithMessages | undefined> => {
+  
+  const messages = await signOperations(operations, keyPair, Date.now())
 
   postingError.value = undefined
   isPosting.value = true
@@ -153,10 +127,10 @@ export const publishMessages = async (messages: Messages): Promise<IdentityWithM
       throw new Error(`Publish failed: ${ response.statusText }`)
     }
     const [identity] = await response.json()
-    if (isIdentity(identity) === false) {
-      throw new Error("Invalid identity received from server")
+    if (isIdentityWithMessages(identity) === false) {
+      throw new Error("Invalid IdentityWithMessages received from server")
     }
-    names.value.push(identity)
+    addToNames(identity)
     return identity
   } catch (err) {
     postingError.value = err instanceof Error ? err.message : String(err)
