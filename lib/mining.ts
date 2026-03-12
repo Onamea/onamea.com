@@ -37,6 +37,10 @@ const abortFunc = signal<() => void>()
 
 const url = new URL("/workers/worker.js", import.meta.url)
 
+const canGenerateMnemonic = (cryptoName: CryptoName): boolean => {
+  return cryptoName === "ECDSA" || cryptoName === "Schnorr"
+}
+
 export const startMining = async (cryptoName: CryptoName, fingerprintedName: Name | FingerprintedName, shouldGenerateMnemonic = false, xPub?: XPub) => {
 
   if (isMining.value) {
@@ -76,7 +80,8 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
         progress.value = { totalAttempts, attemptsPerSecond }
       },
       undefined,
-      xPub === undefined ? shouldGenerateMnemonic : false,
+      xPub === undefined && canGenerateMnemonic(cryptoName) ? shouldGenerateMnemonic : false,
+      undefined,
       xPub
     )
     abortFunc.value = abort
