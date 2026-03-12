@@ -1,5 +1,6 @@
 {
   "nodeModulesDir": "auto",
+  "unstable": ["detect-cjs"],
   "tasks": {
     "check": "deno fmt --check . && deno lint . && deno check",
     "dev": "vite",
@@ -20,8 +21,8 @@
     "**/_fresh/*"
   ],
   "imports": {
-    "@vanice/types": "jsr:@vanice/types@^0.2.44",
-    "@vanice/vanice-pool": "jsr:@vanice/vanice-pool@^0.2.44",
+    "@vanice/types": "jsr:@vanice/types@^0.2.45",
+    "@vanice/vanice-pool": "jsr:@vanice/vanice-pool@^0.2.45",
     "fresh": "jsr:@fresh/core@^2.1.1",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.3.1",
