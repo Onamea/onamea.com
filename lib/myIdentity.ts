@@ -1,17 +1,20 @@
-import type { FingerprintedName, Identity, IdentityWithMessages, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, Operations, Messages, NameKey, PathStringified, Operation } from "@vanice/types"
+import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey } from "@vanice/types"
+import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@vanice/crdt"
 import { 
   primaryKeyToFingerprintedName, 
-  identify as identifyByName,
   parseNameKey,
+  isFingerprintedName,
+  isNameKey
+} from "@vanice/types"
+import { 
+  identify as identifyByName,
   createCreateOperation,
   isIdentity,
   buildIdentityFromOperations,
   parseAmbiguousPath,
   getUnsignedOperations,
   createSetOperation,
-  isFingerprintedName,
-  isNameKey
-} from "@vanice/types"
+} from "@vanice/crdt"
 import { signal } from "@preact/signals"
 import { fetchByFingerprintedName, URL, IDENTITY_KEY_DOMAIN, publishOperations } from "./identities.ts"
 import { Plural, toPlural } from "./utils/plural.ts"

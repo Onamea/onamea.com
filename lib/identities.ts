@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals"
-import type { Identity, IdentityWithMessages, Operations, FingerprintedName, KeyPair } from "@vanice/types"
-import { isIdentity, isIdentityWithMessages, signOperations } from "@vanice/types"
+import type { FingerprintedName, KeyPair } from "@vanice/types"
+import { type Identity, type IdentityWithMessages, type Operations, isIdentity, isIdentityWithMessages, signOperations } from "@vanice/crdt"
 import { type Plural, toPlural } from "./utils/plural.ts"
 
 export const URL = "https://api.vanice.cloud/"

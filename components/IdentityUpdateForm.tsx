@@ -1,9 +1,9 @@
 import type { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
+import { type Hash, isHash } from "@vanice/types"
 import { 
   type Identity, 
   type OperationName,
-  type Hash,
   getPreviousHash,
   operations,
   isId,
@@ -16,9 +16,8 @@ import {
   createRevokeOperation,
   createDenounceOperation,
   createUnrelateOperation,
-  createRevertOperation,
-  isHash
-} from "@vanice/types"
+  createRevertOperation
+} from "@vanice/crdt"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 import { isSyncedToAPI, myIdentity, updateMyIdentity, publishMyIdentity } from "../lib/myIdentity.ts"
 

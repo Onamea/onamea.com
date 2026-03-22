@@ -1,11 +1,13 @@
-import { type FingerprintedName, type SubKey, parseNameKey, primaryKeyToFingerprintedName } from "@vanice/types"
+import { type FingerprintedName, type NameKey, parseNameKey, primaryKeyToFingerprintedName } from "@vanice/types"
+import { type SubKey } from "@vanice/crdt"
 
 export type ExtendedSubKey = SubKey & {
   fingerprintedName: FingerprintedName
 }
 
 export const extendSubKey = async (subKey: SubKey): Promise<ExtendedSubKey> => { 
-  const [primaryKey, name] = parseNameKey(subKey.subKey)
+  // TODO: parseIdentityKey
+  const [primaryKey, name] = parseNameKey(subKey.subKey as NameKey)
   const [fingerprintedName] = await primaryKeyToFingerprintedName(primaryKey, name)
   return {
     ...subKey,
