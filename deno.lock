@@ -35,8 +35,9 @@
     "jsr:@std/semver@1": "1.0.5",
     "jsr:@std/uuid@^1.0.7": "1.0.9",
     "jsr:@vanice/crdt@~0.3.2": "0.3.2",
-    "jsr:@vanice/types@0.3": "0.3.0",
-    "jsr:@vanice/vanice-pool@0.3": "0.3.0",
+    "jsr:@vanice/types@0.3": "0.3.1",
+    "jsr:@vanice/types@~0.3.1": "0.3.1",
+    "jsr:@vanice/vanice-pool@~0.3.1": "0.3.1",
     "npm:@babel/core@^7.28.0": "7.28.4",
     "npm:@babel/preset-react@^7.27.1": "7.27.1_@babel+core@7.28.4",
     "npm:@cfworker/json-schema@^4.1.1": "4.1.1",
@@ -213,12 +214,12 @@
     "@vanice/crdt@0.3.2": {
       "integrity": "cfda697b79f9b4ff61092b970e2927be4a6a8642bf6da2400b8c83972c119855",
       "dependencies": [
-        "jsr:@vanice/types",
+        "jsr:@vanice/types@0.3",
         "npm:@cfworker/json-schema"
       ]
     },
-    "@vanice/types@0.3.0": {
-      "integrity": "f48afa58903a237ef7e1a2ff3ae70593488688d8533a8bd29be4855f898ed21c",
+    "@vanice/types@0.3.1": {
+      "integrity": "0af42999f9fbc7f5d79327e72fcb66e253275836f70f07f26db0db80775af855",
       "dependencies": [
         "jsr:@noble/ed25519",
         "jsr:@noble/hashes@^1.8.0",
@@ -227,10 +228,10 @@
         "jsr:@scure/bip39"
       ]
     },
-    "@vanice/vanice-pool@0.3.0": {
-      "integrity": "07a4f2640152ac0d3c05a673f7c56cbf174cf434174de9b49353ccd60fd48db4",
+    "@vanice/vanice-pool@0.3.1": {
+      "integrity": "a6ac07ee1f920ada85049b72612f5460d0883a15dbae691aaa6f01cf0a76458e",
       "dependencies": [
-        "jsr:@vanice/types"
+        "jsr:@vanice/types@~0.3.1"
       ]
     }
   },
@@ -1039,7 +1040,7 @@
       "jsr:@fresh/plugin-vite@^1.0.4",
       "jsr:@vanice/crdt@~0.3.2",
       "jsr:@vanice/types@0.3",
-      "jsr:@vanice/vanice-pool@0.3",
+      "jsr:@vanice/vanice-pool@~0.3.1",
       "npm:@preact/signals@^2.3.1",
       "npm:preact-router@^4.1.2",
       "npm:preact@^10.27.2",

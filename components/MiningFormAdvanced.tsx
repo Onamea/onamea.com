@@ -21,6 +21,7 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
   const name = useSignal<string>(nameProp ?? "")
   const cryptoName = useSignal<CryptoName>(cryptoNames[0])
   const shouldGenerateMnemonic = useSignal(false)
+  const mnemonicPassphrase = useSignal("")
   const xpub = useSignal("")
   const error = useSignal<string>()
 
@@ -40,11 +41,13 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
       error.value = `${ xpubValue } is not a valid XPub`
       return
     }
+    const mnemonicPassphraseValue = mnemonicPassphrase.value.trim()
     error.value = undefined
     await startMining(
       cryptoName.value, 
       nameValue, 
       canGenerateMnemonic(cryptoName.value) ? shouldGenerateMnemonic.value : false,
+      canGenerateMnemonic(cryptoName.value) && shouldGenerateMnemonic.value && mnemonicPassphraseValue !== "" ? mnemonicPassphraseValue : undefined,
       canMineFromXPub(cryptoName.value) && xpubValue !== "" ? xpubValue : undefined
     )
     name.value = ""
@@ -84,6 +87,15 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
             />
         </div>
       }
+      { canGenerateMnemonic(cryptoName.value) && shouldGenerateMnemonic.value &&
+        <div>
+          <label for="mnemonicPassphrase">Mnemonic passphrase:</label>
+          <input 
+            name="mnemonicPassphrase" 
+            onChange={ event => mnemonicPassphrase.value = event.currentTarget.value }
+            />
+        </div>
+      } 
       { canMineFromXPub(cryptoName.value) && shouldGenerateMnemonic.value === false && 
         <div>
           <label for="xpub">XPub:</label>

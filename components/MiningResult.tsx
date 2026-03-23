@@ -15,6 +15,7 @@ const MiningResult: FunctionComponent<Props> = ({
   publicKey, 
   privateKey, 
   mnemonicDisplay, 
+  mnemonicPassphrase,
   xPub, 
   index 
 }) => {
@@ -39,6 +40,7 @@ const MiningResult: FunctionComponent<Props> = ({
         <div><dd>public key</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
         { privateKeyDisplay && <div><dd>private key</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }
         { mnemonicDisplay && <div><dd>mnemonic</dd><dt><SecretDisplay secret={ mnemonicDisplay } mapping="words" /></dt></div> }
+        { mnemonicPassphrase && <div><dd>mnemonic passphrase</dd><dt><SecretDisplay secret={ mnemonicPassphrase } /></dt></div> }
         { xPub && <div><dd>xPub</dd><dt>{ xPub }</dt></div> }
         { xPub && index && <div><dd>index</dd><dt>{ index }</dt></div> }
       </dl>

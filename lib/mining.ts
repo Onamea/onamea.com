@@ -1,5 +1,15 @@
 import { signal } from "@preact/signals"
-import type { Name, PrimaryKey, Fingerprint, FingerprintDisplay, XPub, CryptoName, MnemonicDisplay, FingerprintedName } from "@vanice/types"
+import type { 
+  Name, 
+  PrimaryKey, 
+  Fingerprint, 
+  FingerprintDisplay, 
+  XPub, 
+  CryptoName, 
+  MnemonicDisplay, 
+  FingerprintedName, 
+  MnemonicPassphrase 
+} from "@vanice/types"
 import { 
   displayFingerprint, 
   publicKeyToPrimaryKey, 
@@ -21,6 +31,7 @@ export type MiningResult = {
   publicKey: Uint8Array
   privateKey?: Uint8Array
   mnemonicDisplay?: MnemonicDisplay
+  mnemonicPassphrase?: MnemonicPassphrase
   xPub?: XPub
   index?: number
 }
@@ -41,7 +52,7 @@ const canGenerateMnemonic = (cryptoName: CryptoName): boolean => {
   return cryptoName === "ECDSA" || cryptoName === "Schnorr"
 }
 
-export const startMining = async (cryptoName: CryptoName, fingerprintedName: Name | FingerprintedName, shouldGenerateMnemonic = false, xPub?: XPub) => {
+export const startMining = async (cryptoName: CryptoName, fingerprintedName: Name | FingerprintedName, shouldGenerateMnemonic = false, mnemonicPassphrase?: MnemonicPassphrase, xPub?: XPub) => {
 
   if (isMining.value) {
     error.value = "Mining is already in progress"
@@ -81,7 +92,7 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
       },
       undefined,
       xPub === undefined && canGenerateMnemonic(cryptoName) ? shouldGenerateMnemonic : false,
-      undefined,
+      mnemonicPassphrase,
       xPub
     )
     abortFunc.value = abort
