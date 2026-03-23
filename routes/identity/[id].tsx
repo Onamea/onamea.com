@@ -1,5 +1,5 @@
 import { define } from "../../utils.ts"
-import Identity from "../../islands/Identity.tsx";
+import Identity from "../../islands/Identity.tsx"
 
 export default define.page((props) => {
 
