@@ -1,4 +1,4 @@
-import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey } from "@vanice/types"
+import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@vanice/types"
 import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@vanice/crdt"
 import { 
   primaryKeyToFingerprintedName, 
@@ -92,7 +92,7 @@ export const clearMyIdentity = () => {
   isSyncedToAPI.value = false
 }
 
-export const identifyByPathStringified = async (pathStringified: PathStringified, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay): Promise<[NameKey, KeyPairDisplay]> => {
+export const identifyByPathStringified = async (pathStringified: PathStringified, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay | MnemonicDisplayWithPassphrase): Promise<[NameKey, KeyPairDisplay]> => {
 
   if (myIdentity.value !== undefined) {
     throw new Error("Already identified")

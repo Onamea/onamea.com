@@ -1,13 +1,12 @@
 import type { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { type Hash, isHash } from "@vanice/types"
+import { type Hash, isHash, isNameKey } from "@vanice/types"
 import { 
   type Identity, 
   type OperationName,
   getPreviousHash,
   operations,
   isId,
-  isIdentityKey,
   createSetOperation, 
   createGrantOperation,
   createVouchOperation,
@@ -35,14 +34,14 @@ const createOperation = async (operationName: OperationName, id: Identity["id"],
     case "DELETE":
       return await createDeleteOperation(id, previousHash)
     case "GRANT":
-      if (isIdentityKey(body) === false) {
+      if (isNameKey(body) === false) {
         throw new Error ("Invalid IdentityKey")
       }
       return await createGrantOperation(id, previousHash, body)
     case "REVOKE":
       return await createRevokeOperation(id, previousHash)
     case "VOUCH":
-      if (isIdentityKey(body) === false) {
+      if (isNameKey(body) === false) {
         throw new Error ("Invalid IdentityKey")
       }
       return await createVouchOperation(id, previousHash, body)
