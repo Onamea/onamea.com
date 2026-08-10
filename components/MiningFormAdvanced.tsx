@@ -1,6 +1,6 @@
 import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { type CryptoName, cryptoNames, isXPub, isNameOrFingerprintedName } from "@vanice/types"
+import { type CryptoName, cryptoNames, isXPub, isNameOrFingerprintedName } from "@onamea/types"
 import { startMining } from "../lib/mining.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { isMnemonicDisplay, isPrivateKeyDisplay } from "@vanice/types"
+import { isMnemonicDisplay, isPrivateKeyDisplay } from "@onamea/types"
 import { identifyByPathStringified } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 

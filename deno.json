@@ -20,9 +20,9 @@
     "**/_fresh/*"
   ],
   "imports": {
-    "@vanice/crdt": "jsr:@vanice/crdt@^0.3.9",
-    "@vanice/types": "jsr:@vanice/types@^0.3.7",
-    "@vanice/vanice-pool": "jsr:@vanice/vanice-pool@^0.3.1",
+    "@onamea/crdt": "jsr:@onamea/crdt@^0.3.9",
+    "@onamea/types": "jsr:@onamea/types@^0.3.7",
+    "@onamea/workers": "jsr:@onamea/workers@^0.3.4",
     "fresh": "jsr:@fresh/core@^2.1.1",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.3.1",

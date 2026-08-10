@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { useEffect } from "preact/hooks"
-import type { Identity, Id } from "@vanice/crdt"
+import type { Identity, Id } from "@onamea/crdt"
 import { fetchById, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/identities.ts"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
 import IdentityDisplay from "../components/IdentityDisplay.tsx"

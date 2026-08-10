@@ -1,5 +1,5 @@
 import { type FunctionComponent } from "preact"
-import { toPrimaryName } from "@vanice/types"
+import { toPrimaryName } from "@onamea/types"
 import NumberDisplay from "./NumberDisplay.tsx"
 import { stopMining } from "../lib/mining.ts"
 

@@ -9,7 +9,7 @@ import type {
   MnemonicDisplay, 
   FingerprintedName, 
   MnemonicPassphrase 
-} from "@vanice/types"
+} from "@onamea/types"
 import { 
   displayFingerprint, 
   publicKeyToPrimaryKey, 
@@ -19,8 +19,8 @@ import {
   isXPub,
   isNameOrFingerprintedName,
   parseFingerprintedName
-} from "@vanice/types"
-import { createWorkerPool } from "@vanice/vanice-pool"
+} from "@onamea/types"
+import { createWorkerPool } from "@onamea/workers"
 
 export type MiningResult = {
   cryptoName: CryptoName

@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import { useSignal } from "@preact/signals"
-import { type Identity } from "@vanice/crdt"
+import { type Identity } from "@onamea/crdt"
 import NameDisplay from "./NameDisplay.tsx"
 import { type ExtendedSubKey, extendSubKeys } from "../lib/subKeys.ts"
 

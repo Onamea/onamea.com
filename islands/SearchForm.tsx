@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals"
-import { isNameOrFingerprintedName, type Name, type PrimaryKey } from "@vanice/types"
+import { isNameOrFingerprintedName, type Name, type PrimaryKey } from "@onamea/types"
 import NameDisplay from "../components/NameDisplay.tsx"
 
 const searchTerm = signal("")
@@ -28,7 +28,7 @@ const handleSubmit = async (e: Event) => {
   results.value = undefined
   
   try {
-    const response = await fetch(`https://vanice-rest.mikeobank.deno.net/name/${ encodeURIComponent(searchTerm.value) }`)
+    const response = await fetch(`https://api.onamea.com/name/${ encodeURIComponent(searchTerm.value) }`)
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`)
     }

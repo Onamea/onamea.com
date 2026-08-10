@@ -1,6 +1,6 @@
 import { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { isNameOrFingerprintedName } from "@vanice/types"
+import { isNameOrFingerprintedName } from "@onamea/types"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
 import { myIdentity } from "../lib/myIdentity.ts"
 

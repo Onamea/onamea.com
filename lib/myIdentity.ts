@@ -1,11 +1,11 @@
-import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@vanice/types"
-import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@vanice/crdt"
+import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@onamea/types"
+import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@onamea/crdt"
 import { 
   primaryKeyToFingerprintedName, 
   parseNameKey,
   isFingerprintedName,
   isNameKey
-} from "@vanice/types"
+} from "@onamea/types"
 import { 
   identify as identifyByName,
   createCreateOperation,
@@ -14,7 +14,7 @@ import {
   parseAmbiguousPath,
   getUnsignedOperations,
   createSetOperation,
-} from "@vanice/crdt"
+} from "@onamea/crdt"
 import { signal } from "@preact/signals"
 import { fetchByFingerprintedName, URL, IDENTITY_KEY_DOMAIN, publishOperations } from "./identities.ts"
 import { Plural, toPlural } from "./utils/plural.ts"

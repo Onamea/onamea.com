@@ -1,6 +1,6 @@
 import type { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
-import { type Hash, isHash, isNameKey } from "@vanice/types"
+import { type Hash, isHash, isNameKey } from "@onamea/types"
 import { 
   type Identity, 
   type OperationName,
@@ -16,7 +16,7 @@ import {
   createDenounceOperation,
   createUnrelateOperation,
   createRevertOperation
-} from "@vanice/crdt"
+} from "@onamea/crdt"
 import ErrorDisplay from "./ErrorDisplay.tsx"
 import { isSyncedToAPI, myIdentity, updateMyIdentity, publishMyIdentity } from "../lib/myIdentity.ts"
 

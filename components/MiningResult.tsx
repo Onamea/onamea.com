@@ -1,5 +1,5 @@
 import { type FunctionComponent } from "preact"
-import { toNameKey, displayPublicKey, displayPrivateKey } from "@vanice/types"
+import { toNameKey, displayPublicKey, displayPrivateKey } from "@onamea/types"
 import NameDisplay from "./NameDisplay.tsx"
 import SecretDisplay from "./SecretDisplay.tsx"
 import PublishForm from "./PublishForm.tsx"

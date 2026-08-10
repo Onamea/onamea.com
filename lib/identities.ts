@@ -1,10 +1,10 @@
 import { signal } from "@preact/signals"
-import type { FingerprintedName, KeyPair } from "@vanice/types"
-import { type Identity, type IdentityWithMessages, type Operations, isIdentity, isIdentityWithMessages, signOperations } from "@vanice/crdt"
+import type { FingerprintedName, KeyPair } from "@onamea/types"
+import { type Identity, type IdentityWithMessages, type Operations, isIdentity, isIdentityWithMessages, signOperations } from "@onamea/crdt"
 import { type Plural, toPlural } from "./utils/plural.ts"
 
-export const URL = "https://api.vanice.cloud/"
-export const IDENTITY_KEY_DOMAIN = "vanice.cloud"
+export const URL = "https://api.onamea.com/"
+export const IDENTITY_KEY_DOMAIN = "onamea.com"
 
 export const names = signal<IdentityWithMessages[]>([])
 export const isFetching = signal(false)

@@ -1,5 +1,5 @@
-import { type KeyPairDisplay } from "@vanice/types"
-import { parseUint8ArrayObject } from "@vanice/crdt"
+import { type KeyPairDisplay } from "@onamea/types"
+import { parseUint8ArrayObject } from "@onamea/crdt"
 import { MyIdentity } from "./myIdentity.ts"
 
 type Uint8ArrayObject = Record<string, number>

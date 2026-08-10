@@ -1,8 +1,8 @@
 import { useSignal } from "@preact/signals"
 import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
-import type { PrimaryKey, Name } from "@vanice/types"
-import { primaryKeyToFingerprintedName, toNameKey } from "@vanice/types"
+import type { PrimaryKey, Name } from "@onamea/types"
+import { primaryKeyToFingerprintedName, toNameKey } from "@onamea/types"
 
 type Props = {
   primaryKey: PrimaryKey

@@ -8,7 +8,7 @@ import {
   type CryptoName,
   toNameKey, 
   keyPairFromPrivateKey
-} from "@vanice/types"
+} from "@onamea/types"
 import { postingError } from "../lib/identities.ts"
 import { myIdentity, initMyIdentity } from "../lib/myIdentity.ts"
 import ErrorDisplay from "./ErrorDisplay.tsx"

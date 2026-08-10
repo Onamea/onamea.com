@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import { useSignal } from "@preact/signals"
-import { isNameOrFingerprintedName } from "@vanice/types"
+import { isNameOrFingerprintedName } from "@onamea/types"
 import MiningFormAdvanced from "../components/MiningFormAdvanced.tsx"
 import MiningProgress from "../components/MiningProgress.tsx"
 import MiningResult from "../components/MiningResult.tsx"

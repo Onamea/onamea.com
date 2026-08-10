@@ -1,5 +1,5 @@
-import { type FingerprintedName, type NameKey, parseNameKey, primaryKeyToFingerprintedName } from "@vanice/types"
-import { type SubKey } from "@vanice/crdt"
+import { type FingerprintedName, type NameKey, parseNameKey, primaryKeyToFingerprintedName } from "@onamea/types"
+import { type SubKey } from "@onamea/crdt"
 
 export type ExtendedSubKey = SubKey & {
   fingerprintedName: FingerprintedName
