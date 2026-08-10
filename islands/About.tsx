@@ -8,7 +8,7 @@ const About: FunctionComponent = () => {
         A protocol to encode vanity names within public keys. Plus an additional fingerprint encoded using emoji characters. Allowing for unique names, where duplicates (conflicting pairs of name & fingerprint) will be exponentially hard to brute force.
       </p>
       <p class="href-wrap">
-        <a href="https://github.com/onamea/docs/blob/main/vanice.md">https://github.com/onamea/docs/blob/main/vanice.md</a>
+        <a href="https://github.com/onamea/docs/blob/main/onamea.md">https://github.com/onamea/docs/blob/main/onamea.md</a>
       </p>
       <p>
         Bitcoin donations: bc1q7tgk2ecfgsqle35lyfxzgnkqe56txts0jsznzc
