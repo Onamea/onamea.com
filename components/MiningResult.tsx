@@ -10,7 +10,8 @@ import { myIdentity } from "../lib/myIdentity.ts"
 const MiningResult: FunctionComponent<Props> = ({ 
   cryptoName, 
   name, 
-  primaryKey, 
+  nameKey,
+  primaryKey,
   fingerprintDisplay, 
   publicKey, 
   privateKey, 
@@ -33,9 +34,9 @@ const MiningResult: FunctionComponent<Props> = ({
     <div class="result py-4">
       <p class="message">Name found!</p>
       <hr/>
-      <h1><NameDisplay primaryKey={ primaryKey } name={ name } /></h1>
+      <h1><NameDisplay nameKey={ nameKey } /></h1>
       <dl>
-        <div><dd>id</dd><dt>{ toNameKey(name, primaryKey) }</dt></div>
+        <div><dd>id</dd><dt>{ toNameKey(name, nameKey) }</dt></div>
         <div><dd>fingerprint</dd><dt>{ fingerprintDisplay }</dt></div>
         <div><dd>public key</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
         { privateKeyDisplay && <div><dd>private key</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }

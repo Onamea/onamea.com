@@ -1,11 +1,11 @@
 import { signal } from "@preact/signals"
-import { isNameOrFingerprintedName, type Name, type PrimaryKey } from "@onamea/types"
+import { isNameOrFingerprintedName, type NameKey } from "@onamea/types"
 import NameDisplay from "../components/NameDisplay.tsx"
 
 const searchTerm = signal("")
 const loading = signal(false)
 const error = signal("")
-const results = signal<Array<{ primaryKey: PrimaryKey, name: Name }>>()
+const results = signal<Array<{ id: NameKey }>>()
 
 const handleSubmit = async (e: Event) => {
 
@@ -33,6 +33,7 @@ const handleSubmit = async (e: Event) => {
       throw new Error(`Error: ${response.status}`)
     }
     const data = await response.json()
+    console.log(data)
     results.value = data
   } catch (err) {
     error.value = err instanceof Error ? err.message : "An error occurred"
@@ -69,7 +70,7 @@ const SearchForm = () => {
       {results.value && results.value.length > 0 && (
         <div class="results py-4">
           <ul>
-          { results.value.map(r => (<li><NameDisplay primaryKey={ r.primaryKey } name={ r.name } /></li>)) }
+          { results.value.map(r => (<li><NameDisplay nameKey={ r.id } /></li>)) }
           </ul>
         </div>
       )}

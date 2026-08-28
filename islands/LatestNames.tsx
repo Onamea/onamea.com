@@ -19,8 +19,8 @@ const LatestNames: FunctionComponent = () => {
       <ErrorDisplay message={fetchingError.value} />
       { !isFetching.value && !fetchingError.value && (
         <ul>
-          { names.value.map(({ name, primaryKey }) => (
-            <li key={ primaryKey }><NameDisplay name={ name } primaryKey={ primaryKey } shouldLink /></li>
+          { names.value.map(({ id }) => (
+            <li key={ id }><NameDisplay nameKey={ id } shouldLink /></li>
           ))}
         </ul>
       )}

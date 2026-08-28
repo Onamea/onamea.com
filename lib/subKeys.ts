@@ -1,4 +1,4 @@
-import { type FingerprintedName, type NameKey, parseNameKey, primaryKeyToFingerprintedName } from "@onamea/types"
+import { type FingerprintedName, nameKeyToFingerprintedName } from "@onamea/types"
 import { type SubKey } from "@onamea/crdt"
 
 export type ExtendedSubKey = SubKey & {
@@ -6,9 +6,7 @@ export type ExtendedSubKey = SubKey & {
 }
 
 export const extendSubKey = async (subKey: SubKey): Promise<ExtendedSubKey> => { 
-  // TODO: parseIdentityKey
-  const [primaryKey, name] = parseNameKey(subKey.subKey as NameKey)
-  const [fingerprintedName] = await primaryKeyToFingerprintedName(primaryKey, name)
+  const fingerprintedName = await nameKeyToFingerprintedName(subKey.subKey)
   return {
     ...subKey,
     fingerprintedName

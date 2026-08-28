@@ -3,7 +3,7 @@ import { useSignal } from "@preact/signals"
 import { type Hash, isHash, isNameKey } from "@onamea/types"
 import { 
   type Identity, 
-  type OperationName,
+  type OperationType,
   getPreviousHash,
   operations,
   isId,
@@ -25,10 +25,10 @@ type Props = {
 }
 
 const nonCreateOperations = operations.filter(operation => operation !== "CREATE")
-const targetHashOperations: OperationName[] = ["REVOKE", "DENOUNCE", "UNRELATE", "REVERT"] as const
+const targetHashOperations: OperationType[] = ["REVOKE", "DENOUNCE", "UNRELATE", "REVERT"] as const
 
-const createOperation = async (operationName: OperationName, id: Identity["id"], previousHash: Hash, body?: string) => {
-  switch (operationName) {
+const createOperation = async (operationType: OperationType, id: Identity["id"], previousHash: Hash, body?: string) => {
+  switch (operationType) {
     case "SET":
       return await createSetOperation(id, previousHash, body ?? "")
     case "DELETE":
@@ -60,14 +60,14 @@ const createOperation = async (operationName: OperationName, id: Identity["id"],
       }
       return await createRevertOperation(id, body)
     default:
-      throw new Error(`Unsupported operationName: ${ operationName }`)
+      throw new Error(`Unsupported operationType: ${ operationType }`)
   }
 }
 
 const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
 
   const showForm = useSignal(false)
-  const operationName = useSignal<OperationName>("SET")
+  const operationName = useSignal<OperationType>("SET")
 
   const body = useSignal(identity.body ?? "")
   const publishError = useSignal<string>()
@@ -125,7 +125,7 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
           <select 
             value={ operationName.value } 
             onChange={ e => {
-              operationName.value = (e.target as HTMLSelectElement).value as OperationName 
+              operationName.value = (e.target as HTMLSelectElement).value as OperationType 
               body.value = ""
             } }>
             { nonCreateOperations.map(operation => (

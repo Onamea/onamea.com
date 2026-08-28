@@ -1,8 +1,6 @@
 import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@onamea/types"
 import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@onamea/crdt"
 import { 
-  primaryKeyToFingerprintedName, 
-  parseNameKey,
   isFingerprintedName,
   isNameKey
 } from "@onamea/types"
@@ -11,7 +9,7 @@ import {
   createCreateOperation,
   isIdentity,
   buildIdentityFromOperations,
-  parseAmbiguousPath,
+  parsePath,
   getUnsignedOperations,
   createSetOperation,
 } from "@onamea/crdt"
@@ -31,12 +29,9 @@ export const myIdentity = signal<MyIdentity>()
 export const isSyncedToAPI = signal(false)
 
 const buildMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, operations?: Operations, messages: Messages = []): Promise<MyIdentity> => {
-  const [primaryKey, name] = parseNameKey(id)
-  const [fingerprintedName] = await primaryKeyToFingerprintedName(primaryKey, name)
   const identity = await buildIdentityFromOperations(operations ?? [await createCreateOperation(id)], id, true)
   return {
     ...identity,
-    fingerprintedName,
     keyPair,
     messages
   }
@@ -102,7 +97,7 @@ export const identifyByPathStringified = async (pathStringified: PathStringified
   let nameKey: NameKey
 
   if (isFingerprintedName(id)) {
-    const path = parseAmbiguousPath(pathStringified)
+    const path = parsePath(pathStringified)
     const subKeyInPath = path.elements[1].id
     const identities = await fetchByFingerprintedName(id)
     const extendedIdentities = await Promise.all(identities.map(async (identity) => ({

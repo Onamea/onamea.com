@@ -1,6 +1,7 @@
 import { type FunctionComponent } from "preact"
 import { useEffect } from "preact/hooks"
 import { useSignal } from "@preact/signals"
+import { type FingerprintDisplay, nameKeyToFingerprintDisplay } from "@onamea/types"
 import { type Identity } from "@onamea/crdt"
 import NameDisplay from "./NameDisplay.tsx"
 import { type ExtendedSubKey, extendSubKeys } from "../lib/subKeys.ts"
@@ -15,22 +16,23 @@ const isEmpty = (arr: Array<unknown> | undefined) : boolean => {
 
 const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
 
+  const fingerprintDisplay = useSignal<FingerprintDisplay>()
   const subKeys = useSignal<ExtendedSubKey[]>([])
   const operationsExpanded = useSignal(false)
 
   useEffect(() => {
     ;(async () => {
+      fingerprintDisplay.value = await nameKeyToFingerprintDisplay(identity.id)
       subKeys.value = await extendSubKeys(identity.subKeys)
     })()
-  }, [identity.subKeys])
-
+  }, [identity.id, identity.subKeys])
 
   return (
     <div>
-      <h1><NameDisplay name={ identity.name } primaryKey={ identity.primaryKey } /></h1>
+      <h1><NameDisplay nameKey={ identity.id } /></h1>
       <dl>
         <div><dd>id</dd><dt>{ identity.id }</dt></div>
-        <div><dd>fingerprint</dd><dt>{ identity.fingerprintDisplay }</dt></div>
+        <div><dd>fingerprint</dd><dt>{ fingerprintDisplay.value ?? "" }</dt></div>
         <div><dd>body</dd><dt>{ identity.body ?? "-" }</dt></div>
         <div><dd>tombstone</dd><dt>{ String(identity.tombstone) }</dt></div>
         <div>

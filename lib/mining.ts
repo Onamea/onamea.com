@@ -1,32 +1,38 @@
 import { signal } from "@preact/signals"
 import type { 
   Name, 
-  PrimaryKey, 
-  Fingerprint, 
   FingerprintDisplay, 
   XPub, 
   CryptoName, 
   MnemonicDisplay, 
   FingerprintedName, 
-  MnemonicPassphrase 
+  MnemonicPassphrase, 
+  NameKey,
+  PrimaryKey,
+  Fingerprint
 } from "@onamea/types"
 import { 
   displayFingerprint, 
-  publicKeyToPrimaryKey, 
-  primaryKeyToFingerprint, 
+  publicKeyToNameKey, 
   isCryptoName, 
   isName, 
   isXPub,
   isNameOrFingerprintedName,
-  parseFingerprintedName
+  parseFingerprintedName,
+  nameKeyToFingerprint,
+  isFingerprintedName,
+  nameKeyToPrimaryKey,
+  nameKeyToFingerprintedName
 } from "@onamea/types"
 import { createWorkerPool } from "@onamea/workers"
 
 export type MiningResult = {
   cryptoName: CryptoName
   name: Name
+  nameKey: NameKey
   primaryKey: PrimaryKey
   fingerprint: Fingerprint
+  fingerprintedName: FingerprintedName
   fingerprintDisplay: FingerprintDisplay
   publicKey: Uint8Array
   privateKey?: Uint8Array
@@ -100,14 +106,19 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
 
     if (r !== undefined) {
 
-      const primaryKey = publicKeyToPrimaryKey(cryptoName, r.publicKey)
-      const fingerprint = await primaryKeyToFingerprint(primaryKey)
+      const n = isFingerprintedName(name) ? parseFingerprintedName(name)[0] : name
+      const nameKey = publicKeyToNameKey(n, cryptoName, r.publicKey)
+      const primaryKey = nameKeyToPrimaryKey(nameKey)
+      const fingerprintedName = await nameKeyToFingerprintedName(nameKey)
+      const fingerprint = await nameKeyToFingerprint(nameKey)
       const fingerprintDisplay = displayFingerprint(fingerprint)
 
       result.value = {
         ...r,
         name,
+        nameKey,
         primaryKey,
+        fingerprintedName,
         fingerprint,
         fingerprintDisplay
       }
