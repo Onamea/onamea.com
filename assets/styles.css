@@ -96,3 +96,7 @@ dl > div {
   margin-bottom: 32px;
 }
 
+.multiline {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
