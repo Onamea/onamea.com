@@ -36,7 +36,7 @@ const MiningResult: FunctionComponent<Props> = ({
       <hr/>
       <h1><NameDisplay nameKey={ nameKey } /></h1>
       <dl>
-        <div><dd>id</dd><dt>{ toNameKey(name, nameKey) }</dt></div>
+        <div><dd>id</dd><dt>{ nameKey }</dt></div>
         <div><dd>fingerprint</dd><dt>{ fingerprintDisplay }</dt></div>
         <div><dd>public key</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
         { privateKeyDisplay && <div><dd>private key</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }
