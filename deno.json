@@ -21,7 +21,7 @@
   ],
   "imports": {
     "@fresh/core": "jsr:@fresh/core@^2.3.3",
-    "@onamea/crdt": "jsr:@onamea/crdt@^0.5.0",
+    "@onamea/crdt": "jsr:@onamea/crdt@0.6.1",
     "@onamea/types": "jsr:@onamea/types@^0.5.3",
     "@onamea/workers": "jsr:@onamea/workers@^0.5.0",
     "fresh": "jsr:@fresh/core@^2.3.3",

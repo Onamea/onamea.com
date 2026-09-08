@@ -9,7 +9,7 @@ const Identify: FunctionComponent = () => {
     <div>
       { myIdentity.value !== undefined ?
         <>
-          <p>Identified as: { myIdentity.value !== undefined ? <a href="/me">{ myIdentity.value.fingerprintedName }</a> : "Unknown" }</p>
+          <p>Identified as: { myIdentity.value !== undefined ? <a href="/me">{ myIdentity.value.displayName ?? myIdentity.value.id }</a> : "Unknown" }</p>
           <LogoutButton />
         </> :
         <IdentifyForm />

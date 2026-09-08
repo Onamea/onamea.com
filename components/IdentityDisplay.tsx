@@ -4,7 +4,6 @@ import { useSignal } from "@preact/signals"
 import { type FingerprintDisplay, nameKeyToFingerprintDisplay } from "@onamea/types"
 import { type Identity } from "@onamea/crdt"
 import NameDisplay from "./NameDisplay.tsx"
-import { type ExtendedSubKey, extendSubKeys } from "../lib/subKeys.ts"
 
 type Props = {
   identity: Identity
@@ -17,15 +16,14 @@ const isEmpty = (arr: Array<unknown> | undefined) : boolean => {
 const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
 
   const fingerprintDisplay = useSignal<FingerprintDisplay>()
-  const subKeys = useSignal<ExtendedSubKey[]>([])
   const operationsExpanded = useSignal(false)
 
   useEffect(() => {
     ;(async () => {
+      // Move to hook useFingerprintDisplay
       fingerprintDisplay.value = await nameKeyToFingerprintDisplay(identity.id)
-      subKeys.value = await extendSubKeys(identity.subKeys)
     })()
-  }, [identity.id, identity.subKeys])
+  }, [identity.id])
 
   return (
     <div>
@@ -41,10 +39,10 @@ const IdentityDisplay: FunctionComponent<Props> = ({ identity }) => {
             { isEmpty(identity.subKeys) ? 
               <span>-</span> :
               <ul>{ 
-                subKeys.value.map(
-                  ({ subKey, domain, fingerprintedName }) => (
-                    <li key={ subKey }>
-                      <span title={ subKey }>{ fingerprintedName }</span> { domain ? `(${ domain })` : "" }
+                identity.subKeys?.map(
+                  ({ id, domain, displayName }) => (
+                    <li key={ id }>
+                      <span title={ id }>{ displayName ?? id }</span> { domain ? `(${ domain })` : "" }
                     </li>
                   ))
               }</ul>

@@ -19,11 +19,12 @@ const ProfileButton: FunctionComponent = () => {
 
   const isIdentified = myIdentity.value !== undefined
   const href = isIdentified ? "/me" : "/identify"
+  const content = isIdentified ? myIdentity.value!.displayName ?? myIdentity.value!.id : "Identify"
 
   return (
     <a style={ style } href={ href }>  
       <span style={ spanStyle }>👨‍💻</span>
-      { isIdentified ? myIdentity.value?.fingerprintedName ?? "" : "Identify" }
+      { content }
     </a>
   )
 }

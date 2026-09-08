@@ -1,6 +1,6 @@
-import { type KeyPairDisplay } from "@onamea/types"
+import type { KeyPairDisplay } from "@onamea/types"
 import { parseUint8ArrayObject } from "@onamea/crdt"
-import { MyIdentity } from "./myIdentity.ts"
+import type { MyIdentity } from "./myIdentity.ts"
 
 type Uint8ArrayObject = Record<string, number>
 type KeyPairJson = KeyPairDisplay & {

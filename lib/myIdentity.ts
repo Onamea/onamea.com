@@ -1,4 +1,4 @@
-import type { FingerprintedName, PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@onamea/types"
+import type { PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@onamea/types"
 import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@onamea/crdt"
 import { 
   isFingerprintedName,
@@ -12,15 +12,14 @@ import {
   parsePath,
   getUnsignedOperations,
   createSetOperation,
+  isIdentityWithMessages,
 } from "@onamea/crdt"
 import { signal } from "@preact/signals"
 import { fetchByFingerprintedName, URL, IDENTITY_KEY_DOMAIN, publishOperations } from "./identities.ts"
-import { Plural, toPlural } from "./utils/plural.ts"
+import { type Plural, toPlural } from "./utils/plural.ts"
 import { clear, persist, read } from "./myIdentityPersistence.ts"
-import { extendSubKeys } from "./subKeys.ts"
 
 export type MyIdentity = IdentityWithMessages & {
-  fingerprintedName: FingerprintedName
   keyPair: KeyPairDisplay
 }
 
@@ -100,12 +99,8 @@ export const identifyByPathStringified = async (pathStringified: PathStringified
     const path = parsePath(pathStringified)
     const subKeyInPath = path.elements[1].id
     const identities = await fetchByFingerprintedName(id)
-    const extendedIdentities = await Promise.all(identities.map(async (identity) => ({
-        ...identity,
-        subKeys: await extendSubKeys(identity.subKeys)
-      })))
-    const identity = extendedIdentities.find(({ subKeys }) => subKeys.find(
-      ({ fingerprintedName, domain }) => fingerprintedName.startsWith(subKeyInPath) && (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
+    const identity = identities.find(({ subKeys }) => subKeys?.find(
+      ({ displayName, domain }) => displayName?.startsWith(subKeyInPath) && (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
     ))
     if (identity === undefined) {
       throw new Error(`No identity (${ id}) found with SubKey: ${ subKeyInPath }`)
@@ -130,7 +125,7 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
     }
 
     const identity = await response.json()
-    if (isIdentity(identity) === false) {
+    if (isIdentityWithMessages(identity) === false) {
       throw new Error("Invalid identity received from server")
     }
 
@@ -154,6 +149,7 @@ export const publishMyIdentity = async (): Promise<boolean> => {
   const updatedIdentity = await publishOperations(unsignedOperations, myIdentity.value.keyPair)
   if (updatedIdentity !== undefined) {
     myIdentity.value = await buildMyIdentity(updatedIdentity.id, myIdentity.value.keyPair, updatedIdentity.operations, updatedIdentity.messages)
+    persist(myIdentity.value)
     isSyncedToAPI.value = true
     return true
   } else {

@@ -12,7 +12,7 @@
     "jsr:@noble/ed25519@^3.1.0": "3.1.0",
     "jsr:@noble/hashes@2.3.0": "2.3.0",
     "jsr:@noble/secp256k1@3.1.0": "3.1.0",
-    "jsr:@onamea/crdt@0.5": "0.5.0",
+    "jsr:@onamea/crdt@0.6.1": "0.6.1",
     "jsr:@onamea/types@~0.5.2": "0.5.3",
     "jsr:@onamea/types@~0.5.3": "0.5.3",
     "jsr:@onamea/workers@0.5": "0.5.0",
@@ -143,8 +143,8 @@
     "@noble/secp256k1@3.1.0": {
       "integrity": "cd6b02d94b96ce37f6ef332fa20ebaeefa603edda5e3488f15be06fd1a52a359"
     },
-    "@onamea/crdt@0.5.0": {
-      "integrity": "e7d933daba0f3a656817eb99aaecfd076478191c6e9a63180166cac85b274160",
+    "@onamea/crdt@0.6.1": {
+      "integrity": "3703996dc13fcb4db33940fe2ab27a527caf596e3c5ce0b8176b76f217646c99",
       "dependencies": [
         "jsr:@onamea/types@~0.5.2",
         "npm:@cfworker/json-schema"
@@ -1277,7 +1277,7 @@
     "dependencies": [
       "jsr:@fresh/core@^2.3.3",
       "jsr:@fresh/plugin-vite@^1.1.2",
-      "jsr:@onamea/crdt@0.5",
+      "jsr:@onamea/crdt@0.6.1",
       "jsr:@onamea/types@~0.5.3",
       "jsr:@onamea/workers@0.5",
       "npm:@preact/signals@^2.11.1",
