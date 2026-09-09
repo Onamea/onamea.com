@@ -29,15 +29,12 @@ const toHidden = (secret: string, mapping: HideMapping = "chars"): string => {
   return hideFunction(secret)
 }
 
-
-
 type Props = {
   secret: string
   mapping?: HideMapping
 }
 
 const SecretDisplay: FunctionComponent<Props> = ({ secret, mapping }) => {
-
   const isHidden = useSignal(true)
 
   const onClickCopy = async () => {
@@ -55,10 +52,10 @@ const SecretDisplay: FunctionComponent<Props> = ({ secret, mapping }) => {
 
   return (
     <>
-      <p style={ pStyle }>{ isHidden.value ? toHidden(secret, mapping) : secret }</p>
-      <span style={ spanStyle }>
-        <EmojiButton emoji="👁️" title="Show / Hide" onClick={ onClickHidden } />
-        <EmojiButton emoji="📋" title="Copy to clipboard" onClick={ onClickCopy } />
+      <p style={pStyle}>{isHidden.value ? toHidden(secret, mapping) : secret}</p>
+      <span style={spanStyle}>
+        <EmojiButton emoji="👁️" title="Show / Hide" onClick={onClickHidden} />
+        <EmojiButton emoji="📋" title="Copy to clipboard" onClick={onClickCopy} />
       </span>
     </>
   )

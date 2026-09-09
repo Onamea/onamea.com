@@ -7,20 +7,19 @@ import PublishSubKeyForm from "./PublishSubKeyForm.tsx"
 import { type MiningResult as Props, clearResult } from "../lib/mining.ts"
 import { myIdentity } from "../lib/myIdentity.ts"
 
-const MiningResult: FunctionComponent<Props> = ({ 
-  cryptoName, 
-  name, 
+const MiningResult: FunctionComponent<Props> = ({
+  cryptoName,
+  name,
   nameKey,
   primaryKey,
-  fingerprintDisplay, 
-  publicKey, 
-  privateKey, 
-  mnemonicDisplay, 
+  fingerprintDisplay,
+  publicKey,
+  privateKey,
+  mnemonicDisplay,
   mnemonicPassphrase,
-  xPub, 
-  index 
+  xPub,
+  index
 }) => {
-
   const onClick = (event: MouseEvent) => {
     event.preventDefault()
     if (confirm("Are you sure you want to clear the result?")) {
@@ -33,32 +32,81 @@ const MiningResult: FunctionComponent<Props> = ({
   return (
     <div class="result py-4">
       <p class="message">Name found!</p>
-      <hr/>
-      <h1><NameDisplay nameKey={ nameKey } /></h1>
+      <hr />
+      <h1>
+        <NameDisplay nameKey={nameKey} />
+      </h1>
       <dl>
-        <div><dd>id</dd><dt>{ nameKey }</dt></div>
-        <div><dd>fingerprint</dd><dt>{ fingerprintDisplay }</dt></div>
-        <div><dd>public key</dd><dt>{ displayPublicKey(publicKey) }</dt></div>
-        { privateKeyDisplay && <div><dd>private key</dd><dt><SecretDisplay secret={ privateKeyDisplay } /></dt></div> }
-        { mnemonicDisplay && <div><dd>mnemonic</dd><dt><SecretDisplay secret={ mnemonicDisplay } mapping="words" /></dt></div> }
-        { mnemonicPassphrase && <div><dd>mnemonic passphrase</dd><dt><SecretDisplay secret={ mnemonicPassphrase } /></dt></div> }
-        { xPub && <div><dd>xPub</dd><dt>{ xPub }</dt></div> }
-        { xPub && index && <div><dd>index</dd><dt>{ index }</dt></div> }
+        <div>
+          <dd>id</dd>
+          <dt>{nameKey}</dt>
+        </div>
+        <div>
+          <dd>fingerprint</dd>
+          <dt>{fingerprintDisplay}</dt>
+        </div>
+        <div>
+          <dd>public key</dd>
+          <dt>{displayPublicKey(publicKey)}</dt>
+        </div>
+        {privateKeyDisplay && (
+          <div>
+            <dd>private key</dd>
+            <dt>
+              <SecretDisplay secret={privateKeyDisplay} />
+            </dt>
+          </div>
+        )}
+        {mnemonicDisplay && (
+          <div>
+            <dd>mnemonic</dd>
+            <dt>
+              <SecretDisplay secret={mnemonicDisplay} mapping="words" />
+            </dt>
+          </div>
+        )}
+        {mnemonicPassphrase && (
+          <div>
+            <dd>mnemonic passphrase</dd>
+            <dt>
+              <SecretDisplay secret={mnemonicPassphrase} />
+            </dt>
+          </div>
+        )}
+        {xPub && (
+          <div>
+            <dd>xPub</dd>
+            <dt>{xPub}</dt>
+          </div>
+        )}
+        {xPub && index && (
+          <div>
+            <dd>index</dd>
+            <dt>{index}</dt>
+          </div>
+        )}
       </dl>
-      <hr/>
-      { privateKeyDisplay &&
+      <hr />
+      {privateKeyDisplay && (
         <>
-          { myIdentity.value === undefined &&
-            <PublishForm primaryKey={ primaryKey } name={ name } privateKeyDisplay={ privateKeyDisplay } cryptoName={ cryptoName } />
-          }
-          { myIdentity.value !== undefined &&
-            <PublishSubKeyForm primaryKey={ primaryKey } name={ name } />
-          }
-          <hr/>
+          {myIdentity.value === undefined && (
+            <PublishForm
+              primaryKey={primaryKey}
+              name={name}
+              privateKeyDisplay={privateKeyDisplay}
+              cryptoName={cryptoName}
+            />
+          )}
+          {myIdentity.value !== undefined && (
+            <PublishSubKeyForm primaryKey={primaryKey} name={name} />
+          )}
+          <hr />
         </>
-      }
+      )}
       <div class="input-wrap">
-        <button type="button" onClick={ onClick }>Clear result</button> 
+        <button type="button" onClick={onClick}>
+          Clear result
+        </button>
       </div>
     </div>
   )

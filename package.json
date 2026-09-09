@@ -1,0 +1,33 @@
+{
+  "name": "onamea",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "oxfmt app.tsx vite.config.ts components views lib",
+    "format:check": "oxfmt --check app.tsx vite.config.ts components views lib",
+    "lint": "oxlint .",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck",
+    "cf:dev": "pnpm build && wrangler dev",
+    "cf:deploy": "pnpm build && wrangler deploy"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.151.1"
+  },
+  "dependencies": {
+    "@onamea/crdt": "npm:@jsr/onamea__crdt@0.6.2",
+    "@onamea/types": "npm:@jsr/onamea__types@^0.5.3",
+    "@onamea/workers": "npm:@jsr/onamea__workers@^0.5.0",
+    "@preact/signals": "^2.11.3",
+    "preact": "^10.29.8",
+    "preact-router": "^4.1.2",
+    "vite": "^8.3.4"
+  }
+}

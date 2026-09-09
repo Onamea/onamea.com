@@ -12,7 +12,6 @@ type Props = {
 }
 
 const MiningProgress: FunctionComponent<Props> = ({ nameToMine, progress }) => {
-
   const primaryName = toPrimaryName(nameToMine)
   const primaryNameLength = primaryName.length
   const expectedAttempts = Math.pow(32, primaryNameLength)
@@ -26,13 +25,28 @@ const MiningProgress: FunctionComponent<Props> = ({ nameToMine, progress }) => {
 
   return (
     <div class="progress py-4">
-      <p>Mining for name: <strong>{ nameToMine }</strong> ({ primaryName })</p>
-      <progress value={ progressValue } max={ max } style={ progressValue === max ? { accentColor: "red" } : {} } />
-      <p>On average 1 in 32<sup>{ primaryNameLength }</sup> (<NumberDisplay value={ expectedAttempts }/>) keys will match</p>
+      <p>
+        Mining for name: <strong>{nameToMine}</strong> ({primaryName})
+      </p>
+      <progress
+        value={progressValue}
+        max={max}
+        style={progressValue === max ? { accentColor: "red" } : {}}
+      />
+      <p>
+        On average 1 in 32<sup>{primaryNameLength}</sup> (<NumberDisplay value={expectedAttempts} />
+        ) keys will match
+      </p>
       <p>Running 8 webworkers</p>
-      <p>Total guesses: <NumberDisplay value={ progress.totalAttempts } /> (<NumberDisplay value={ progress.attemptsPerSecond } />/s)</p>
+      <p>
+        Total guesses: <NumberDisplay value={progress.totalAttempts} /> (
+        <NumberDisplay value={progress.attemptsPerSecond} />
+        /s)
+      </p>
       <div class="input-wrap">
-        <button type="button" onClick={ onClick }>Abort mining</button> 
+        <button type="button" onClick={onClick}>
+          Abort mining
+        </button>
       </div>
     </div>
   )

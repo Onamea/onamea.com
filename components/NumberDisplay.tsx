@@ -5,7 +5,7 @@ type Props = {
 }
 
 const NumberDisplay: FunctionComponent<Props> = ({ value }) => {
-  return <>{ value.toLocaleString("en-US") }</>
+  return <>{value.toLocaleString("en-US")}</>
 }
 
 export default NumberDisplay

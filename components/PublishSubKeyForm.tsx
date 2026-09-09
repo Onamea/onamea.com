@@ -13,7 +13,6 @@ type Props = {
 }
 
 const PublishSubKeyForm: FunctionComponent<Props> = ({ primaryKey, name }) => {
-
   const nameKey = useMemo(() => toNameKey(name, primaryKey), [name, primaryKey])
 
   const onSubmit = async (event: Event) => {
@@ -23,8 +22,8 @@ const PublishSubKeyForm: FunctionComponent<Props> = ({ primaryKey, name }) => {
     } else {
       if (confirm("Have you saved the private key for this sub key?")) {
         const grantOperation = await createGrantOperation(
-          myIdentity.value.id, 
-          myIdentity.value.operations[0].hash, 
+          myIdentity.value.id,
+          myIdentity.value.operations[0].hash,
           nameKey,
           IDENTITY_KEY_DOMAIN
         )
@@ -34,13 +33,13 @@ const PublishSubKeyForm: FunctionComponent<Props> = ({ primaryKey, name }) => {
     }
   }
 
-  return (
-    postingError.value 
-      ? <ErrorDisplay message={postingError.value} /> 
-      : <form onSubmit={ onSubmit }>
-          <p>{ nameKey }</p>
-          <button type="submit">publish as sub key</button>
-        </form>
+  return postingError.value ? (
+    <ErrorDisplay message={postingError.value} />
+  ) : (
+    <form onSubmit={onSubmit}>
+      <p>{nameKey}</p>
+      <button type="submit">publish as sub key</button>
+    </form>
   )
 }
 

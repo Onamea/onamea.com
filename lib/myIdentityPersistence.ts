@@ -32,4 +32,3 @@ export const persist = (myIdentity: MyIdentity) => {
 export const clear = () => {
   globalThis.localStorage.removeItem(key)
 }
-

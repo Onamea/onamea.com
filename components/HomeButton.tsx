@@ -8,17 +8,16 @@ const style = {
   textDecoration: "none"
 }
 
-const spanStyle = { 
+const spanStyle = {
   filter: "grayscale(100%)",
   width: "1em",
   marginRight: "12px"
 }
 
 const HomeButton: FunctionComponent = () => {
-
   return (
-    <a style={ style } href="/">  
-      <span style={ spanStyle }>🏠</span>
+    <a style={style} href="/">
+      <span style={spanStyle}>🏠</span>
     </a>
   )
 }

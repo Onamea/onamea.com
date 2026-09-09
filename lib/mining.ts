@@ -1,21 +1,21 @@
 import { signal } from "@preact/signals"
-import type { 
-  Name, 
-  FingerprintDisplay, 
-  XPub, 
-  CryptoName, 
-  MnemonicDisplay, 
-  FingerprintedName, 
-  MnemonicPassphrase, 
+import type {
+  Name,
+  FingerprintDisplay,
+  XPub,
+  CryptoName,
+  MnemonicDisplay,
+  FingerprintedName,
+  MnemonicPassphrase,
   NameKey,
   PrimaryKey,
   Fingerprint
 } from "@onamea/types"
-import { 
-  displayFingerprint, 
-  publicKeyToNameKey, 
-  isCryptoName, 
-  isName, 
+import {
+  displayFingerprint,
+  publicKeyToNameKey,
+  isCryptoName,
+  isName,
   isXPub,
   isNameOrFingerprintedName,
   parseFingerprintedName,
@@ -52,48 +52,52 @@ export const result = signal<MiningResult>()
 
 const abortFunc = signal<() => void>()
 
-const url = new URL("/workers/worker.js", import.meta.url)
+const url = new URL(`${import.meta.env.BASE_URL}workers/worker.js`, globalThis.location.origin)
 
 const canGenerateMnemonic = (cryptoName: CryptoName): boolean => {
   return cryptoName === "ECDSA" || cryptoName === "Schnorr"
 }
 
-export const startMining = async (cryptoName: CryptoName, fingerprintedName: Name | FingerprintedName, shouldGenerateMnemonic = false, mnemonicPassphrase?: MnemonicPassphrase, xPub?: XPub) => {
-
+export const startMining = async (
+  cryptoName: CryptoName,
+  fingerprintedName: Name | FingerprintedName,
+  shouldGenerateMnemonic = false,
+  mnemonicPassphrase?: MnemonicPassphrase,
+  xPub?: XPub
+) => {
   if (isMining.value) {
     error.value = "Mining is already in progress"
   }
 
   if (isCryptoName(cryptoName) === false) {
-    error.value = `Unsupported crypto name: ${ cryptoName }`
+    error.value = `Unsupported crypto name: ${cryptoName}`
   }
   if (isNameOrFingerprintedName(fingerprintedName) === false) {
-    error.value = `Invalid name: ${ fingerprintedName }`
+    error.value = `Invalid name: ${fingerprintedName}`
   }
   if (xPub !== undefined && isXPub(xPub) === false) {
-    error.value = `Invalid XPub: ${ xPub }`
+    error.value = `Invalid XPub: ${xPub}`
   }
 
-  let name: Name 
+  let name: Name
   let fingerprintDisplay: FingerprintDisplay | undefined = undefined
   if (isName(fingerprintedName)) {
     name = fingerprintedName
   } else {
-    [name, fingerprintDisplay] = parseFingerprintedName(fingerprintedName) 
+    ;[name, fingerprintDisplay] = parseFingerprintedName(fingerprintedName)
   }
 
   isMining.value = true
   nameToMine.value = name
 
   try {
-
     const { promise, abort } = createWorkerPool(
-      cryptoName, 
-      name, 
+      cryptoName,
+      name,
       fingerprintDisplay,
-      undefined, 
-      url, 
-      ({ totalAttempts, attemptsPerSecond }) => { 
+      undefined,
+      url,
+      ({ totalAttempts, attemptsPerSecond }) => {
         progress.value = { totalAttempts, attemptsPerSecond }
       },
       undefined,
@@ -105,7 +109,6 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
     const r = await promise
 
     if (r !== undefined) {
-
       const n = isFingerprintedName(name) ? parseFingerprintedName(name)[0] : name
       const nameKey = publicKeyToNameKey(n, cryptoName, r.publicKey)
       const primaryKey = nameKeyToPrimaryKey(nameKey)
@@ -125,7 +128,7 @@ export const startMining = async (cryptoName: CryptoName, fingerprintedName: Nam
     }
     stopMining()
     abortFunc.value = undefined
-  } catch (_) {
+  } catch {
     abortFunc.value = undefined
   }
 }
@@ -140,4 +143,4 @@ export const stopMining = () => {
 export const clearResult = () => {
   nameToMine.value = undefined
   result.value = undefined
-} 
+}

@@ -5,6 +5,7 @@ import type { Identity, Id } from "@onamea/crdt"
 import { fetchById, isFetchingByNameKey, fetchingByNameKeyError } from "../lib/identities.ts"
 import ErrorDisplay from "../components/ErrorDisplay.tsx"
 import IdentityDisplay from "../components/IdentityDisplay.tsx"
+import PageLayout from "../components/PageLayout.tsx"
 import { myIdentity } from "../lib/myIdentity.ts"
 
 type Props = {
@@ -12,7 +13,6 @@ type Props = {
 }
 
 const Identity: FunctionComponent<Props> = ({ id }) => {
-
   const identity = useSignal<Identity>()
   const showMeLink = identity.value?.id === myIdentity.value?.id
 
@@ -23,12 +23,18 @@ const Identity: FunctionComponent<Props> = ({ id }) => {
   }, [id])
 
   return (
-    <div class="py-4">
-      { isFetchingByNameKey.value && <p>Loading...</p>}
-      <ErrorDisplay message={fetchingByNameKeyError.value} />
-      { showMeLink && <p><a href="/me">Update your Identity</a></p> }
-      { identity.value && <IdentityDisplay identity={ identity.value } /> }
-    </div>
+    <PageLayout>
+      <div class="py-4">
+        {isFetchingByNameKey.value && <p>Loading...</p>}
+        <ErrorDisplay message={fetchingByNameKeyError.value} />
+        {showMeLink && (
+          <p>
+            <a href="/me">Update your Identity</a>
+          </p>
+        )}
+        {identity.value && <IdentityDisplay identity={identity.value} />}
+      </div>
+    </PageLayout>
   )
 }
 

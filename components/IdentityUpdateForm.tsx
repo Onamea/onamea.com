@@ -1,13 +1,13 @@
 import type { FunctionComponent } from "preact"
 import { useSignal } from "@preact/signals"
 import { type Hash, isHash, isNameKey } from "@onamea/types"
-import { 
-  type Identity, 
+import {
+  type Identity,
   type OperationType,
   getPreviousHash,
   operations,
   isId,
-  createSetOperation, 
+  createSetOperation,
   createGrantOperation,
   createVouchOperation,
   createRelateOperation,
@@ -18,7 +18,12 @@ import {
   createRevertOperation
 } from "@onamea/crdt"
 import ErrorDisplay from "./ErrorDisplay.tsx"
-import { isSyncedToAPI, myIdentity, updateMyIdentity, publishMyIdentity } from "../lib/myIdentity.ts"
+import {
+  isSyncedToAPI,
+  myIdentity,
+  updateMyIdentity,
+  publishMyIdentity
+} from "../lib/myIdentity.ts"
 
 type Props = {
   identity: Identity
@@ -27,7 +32,12 @@ type Props = {
 const nonCreateOperations = operations.filter(operation => operation !== "CREATE")
 const targetHashOperations: OperationType[] = ["REVOKE", "DENOUNCE", "UNRELATE", "REVERT"] as const
 
-const createOperation = async (operationType: OperationType, id: Identity["id"], previousHash: Hash, body?: string) => {
+const createOperation = async (
+  operationType: OperationType,
+  id: Identity["id"],
+  previousHash: Hash,
+  body?: string
+) => {
   switch (operationType) {
     case "SET":
       return await createSetOperation(id, previousHash, body ?? "")
@@ -35,37 +45,36 @@ const createOperation = async (operationType: OperationType, id: Identity["id"],
       return await createDeleteOperation(id, previousHash)
     case "GRANT":
       if (isNameKey(body) === false) {
-        throw new Error ("Invalid IdentityKey")
+        throw new Error("Invalid IdentityKey")
       }
       return await createGrantOperation(id, previousHash, body)
     case "REVOKE":
       return await createRevokeOperation(id, previousHash)
     case "VOUCH":
       if (isNameKey(body) === false) {
-        throw new Error ("Invalid IdentityKey")
+        throw new Error("Invalid IdentityKey")
       }
       return await createVouchOperation(id, previousHash, body)
     case "DENOUNCE":
       return await createDenounceOperation(id, previousHash)
     case "RELATE":
       if (isId(body) === false) {
-        throw new Error ("Invalid IdentityKey")
+        throw new Error("Invalid IdentityKey")
       }
       return await createRelateOperation(id, previousHash, body)
     case "UNRELATE":
       return await createUnrelateOperation(id, previousHash)
     case "REVERT":
       if (isHash(body) === false) {
-        throw new Error ("Invalid Hash")
+        throw new Error("Invalid Hash")
       }
       return await createRevertOperation(id, body)
     default:
-      throw new Error(`Unsupported operationType: ${ operationType }`)
+      throw new Error(`Unsupported operationType: ${operationType}`)
   }
 }
 
 const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
-
   const showForm = useSignal(false)
   const operationName = useSignal<OperationType>("SET")
 
@@ -97,11 +106,16 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
       }
       const previousHash = getPreviousHash(identity.operations, operationName.value, targetHash)
       if (previousHash === undefined) {
-        publishError.value = `Cannot determine previous hash for ${ operationName.value } Operation on Identity`
+        publishError.value = `Cannot determine previous hash for ${operationName.value} Operation on Identity`
         return
       }
       try {
-        const operation = await createOperation(operationName.value, identity.id, previousHash, bodyValue)
+        const operation = await createOperation(
+          operationName.value,
+          identity.id,
+          previousHash,
+          bodyValue
+        )
         await updateMyIdentity(operation)
         globalThis.location.assign("/me")
       } catch (error) {
@@ -115,37 +129,54 @@ const IdentityUpdateForm: FunctionComponent<Props> = ({ identity }) => {
 
   return (
     <>
-    { isSyncedToAPI.value === false && <button type="button" onClick={ onClickPublish }>Publish</button> }
-    { showForm.value === false ?
-      (
-        <button type="button" onClick={ () => { showForm.value = true } }>Update Identity</button>
+      {isSyncedToAPI.value === false && (
+        <button type="button" onClick={onClickPublish}>
+          Publish
+        </button>
+      )}
+      {showForm.value === false ? (
+        <button
+          type="button"
+          onClick={() => {
+            showForm.value = true
+          }}
+        >
+          Update Identity
+        </button>
       ) : (
-        <form onSubmit={ onSubmit }>
+        <form onSubmit={onSubmit}>
           <h3>Update Identity</h3>
-          <select 
-            value={ operationName.value } 
-            onChange={ e => {
-              operationName.value = (e.target as HTMLSelectElement).value as OperationType 
+          <select
+            value={operationName.value}
+            onChange={e => {
+              operationName.value = (e.target as HTMLSelectElement).value as OperationType
               body.value = ""
-            } }>
-            { nonCreateOperations.map(operation => (
-              <option value={ operation }>{ operation }</option>
-            )) }
+            }}
+          >
+            {nonCreateOperations.map(operation => (
+              <option value={operation}>{operation}</option>
+            ))}
           </select>
           <label>body</label>
-          <textarea 
-            name="body" 
-            value={ body.value } 
-            onInput={ (e) => body.value = (e.target as HTMLTextAreaElement).value } 
-            rows={ 10 } 
-            cols={ 50 } 
+          <textarea
+            name="body"
+            value={body.value}
+            onInput={e => (body.value = (e.target as HTMLTextAreaElement).value)}
+            rows={10}
+            cols={50}
           />
-          <ErrorDisplay message={ publishError.value } />
+          <ErrorDisplay message={publishError.value} />
           <button type="submit">Submit</button>
-          <button type="button" onClick={ () => { showForm.value = false } }>Cancel</button>
+          <button
+            type="button"
+            onClick={() => {
+              showForm.value = false
+            }}
+          >
+            Cancel
+          </button>
         </form>
-      )
-    }
+      )}
     </>
   )
 }

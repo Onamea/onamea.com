@@ -1,21 +1,35 @@
-import type { PrivateKeyDisplay, MnemonicDisplay, KeyPairDisplay, NameKey, MnemonicDisplayWithPassphrase } from "@onamea/types"
-import type { Identity, IdentityWithMessages, Operations, Messages, PathStringified, Operation } from "@onamea/crdt"
-import { 
-  isFingerprintedName,
-  isNameKey
+import type {
+  PrivateKeyDisplay,
+  MnemonicDisplay,
+  KeyPairDisplay,
+  NameKey,
+  MnemonicDisplayWithPassphrase
 } from "@onamea/types"
-import { 
+import type {
+  Identity,
+  IdentityWithMessages,
+  Operations,
+  Messages,
+  PathStringified,
+  Operation
+} from "@onamea/crdt"
+import { isFingerprintedName, isNameKey } from "@onamea/types"
+import {
   identify as identifyByName,
   createCreateOperation,
-  isIdentity,
   buildIdentityFromOperations,
   parsePath,
   getUnsignedOperations,
   createSetOperation,
-  isIdentityWithMessages,
+  isIdentityWithMessages
 } from "@onamea/crdt"
 import { signal } from "@preact/signals"
-import { fetchByFingerprintedName, URL, IDENTITY_KEY_DOMAIN, publishOperations } from "./identities.ts"
+import {
+  fetchByFingerprintedName,
+  URL,
+  IDENTITY_KEY_DOMAIN,
+  publishOperations
+} from "./identities.ts"
 import { type Plural, toPlural } from "./utils/plural.ts"
 import { clear, persist, read } from "./myIdentityPersistence.ts"
 
@@ -27,8 +41,17 @@ export const isFetching = signal(false)
 export const myIdentity = signal<MyIdentity>()
 export const isSyncedToAPI = signal(false)
 
-const buildMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, operations?: Operations, messages: Messages = []): Promise<MyIdentity> => {
-  const identity = await buildIdentityFromOperations(operations ?? [await createCreateOperation(id)], id, true)
+const buildMyIdentity = async (
+  id: Identity["id"],
+  keyPair: KeyPairDisplay,
+  operations?: Operations,
+  messages: Messages = []
+): Promise<MyIdentity> => {
+  const identity = await buildIdentityFromOperations(
+    operations ?? [await createCreateOperation(id)],
+    id,
+    true
+  )
   return {
     ...identity,
     keyPair,
@@ -36,7 +59,12 @@ const buildMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, oper
   }
 }
 
-export const initMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay, body?: Identity["body"], shouldPublish = true) => {
+export const initMyIdentity = async (
+  id: Identity["id"],
+  keyPair: KeyPairDisplay,
+  body?: Identity["body"],
+  shouldPublish = true
+) => {
   if (myIdentity.value !== undefined) {
     throw new Error("Already identified")
   }
@@ -54,11 +82,20 @@ export const initMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay
   }
 }
 
-export const setMyIdentity = async (identity: IdentityWithMessages, keyPair: KeyPairDisplay, shouldPublish = true) => {
+export const setMyIdentity = async (
+  identity: IdentityWithMessages,
+  keyPair: KeyPairDisplay,
+  shouldPublish = true
+) => {
   if (myIdentity.value !== undefined) {
     throw new Error("Already identified")
   }
-  const nextMyIdentity = await buildMyIdentity(identity.id, keyPair, identity.operations, identity.messages)
+  const nextMyIdentity = await buildMyIdentity(
+    identity.id,
+    keyPair,
+    identity.operations,
+    identity.messages
+  )
   persist(nextMyIdentity)
   myIdentity.value = nextMyIdentity
   if (shouldPublish) {
@@ -72,7 +109,11 @@ export const updateMyIdentity = async (operation: Plural<Operation>, shouldPubli
   }
   const operations = toPlural(operation)
   const nextOperations = myIdentity.value.operations.concat(operations)
-  const nextMyIdentity = await buildMyIdentity(myIdentity.value.id, myIdentity.value.keyPair, nextOperations)
+  const nextMyIdentity = await buildMyIdentity(
+    myIdentity.value.id,
+    myIdentity.value.keyPair,
+    nextOperations
+  )
   myIdentity.value = nextMyIdentity
   persist(nextMyIdentity)
   if (shouldPublish) {
@@ -86,8 +127,10 @@ export const clearMyIdentity = () => {
   isSyncedToAPI.value = false
 }
 
-export const identifyByPathStringified = async (pathStringified: PathStringified, privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay | MnemonicDisplayWithPassphrase): Promise<[NameKey, KeyPairDisplay]> => {
-
+export const identifyByPathStringified = async (
+  pathStringified: PathStringified,
+  privateKeyDisplay: PrivateKeyDisplay | MnemonicDisplay | MnemonicDisplayWithPassphrase
+): Promise<[NameKey, KeyPairDisplay]> => {
   if (myIdentity.value !== undefined) {
     throw new Error("Already identified")
   }
@@ -99,11 +142,15 @@ export const identifyByPathStringified = async (pathStringified: PathStringified
     const path = parsePath(pathStringified)
     const subKeyInPath = path.elements[1].id
     const identities = await fetchByFingerprintedName(id)
-    const identity = identities.find(({ subKeys }) => subKeys?.find(
-      ({ displayName, domain }) => displayName?.startsWith(subKeyInPath) && (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
-    ))
+    const identity = identities.find(({ subKeys }) =>
+      subKeys?.find(
+        ({ displayName, domain }) =>
+          displayName?.startsWith(subKeyInPath) &&
+          (domain === undefined || domain === IDENTITY_KEY_DOMAIN)
+      )
+    )
     if (identity === undefined) {
-      throw new Error(`No identity (${ id}) found with SubKey: ${ subKeyInPath }`)
+      throw new Error(`No identity (${id}) found with SubKey: ${subKeyInPath}`)
     }
     nameKey = identity.id
   } else if (isNameKey(id)) {
@@ -115,11 +162,9 @@ export const identifyByPathStringified = async (pathStringified: PathStringified
 }
 
 export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDisplay) => {
-
   try {
-
     isFetching.value = true
-    const response = await fetch(`${ URL }identities/id/${ id }`)
+    const response = await fetch(`${URL}identities/id/${id}`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by id")
     }
@@ -129,7 +174,12 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
       throw new Error("Invalid identity received from server")
     }
 
-    myIdentity.value = await buildMyIdentity(id, keyPair, identity.operations, (identity as IdentityWithMessages).messages)
+    myIdentity.value = await buildMyIdentity(
+      id,
+      keyPair,
+      identity.operations,
+      (identity as IdentityWithMessages).messages
+    )
     persist(myIdentity.value)
     isSyncedToAPI.value = true
   } catch (err) {
@@ -140,7 +190,6 @@ export const fetchMyIdentity = async (id: Identity["id"], keyPair: KeyPairDispla
 }
 
 export const publishMyIdentity = async (): Promise<boolean> => {
-
   if (myIdentity.value === undefined) {
     throw new Error("Not identified")
   }
@@ -148,7 +197,12 @@ export const publishMyIdentity = async (): Promise<boolean> => {
   const unsignedOperations = getUnsignedOperations(myIdentity.value)
   const updatedIdentity = await publishOperations(unsignedOperations, myIdentity.value.keyPair)
   if (updatedIdentity !== undefined) {
-    myIdentity.value = await buildMyIdentity(updatedIdentity.id, myIdentity.value.keyPair, updatedIdentity.operations, updatedIdentity.messages)
+    myIdentity.value = await buildMyIdentity(
+      updatedIdentity.id,
+      myIdentity.value.keyPair,
+      updatedIdentity.operations,
+      updatedIdentity.messages
+    )
     persist(myIdentity.value)
     isSyncedToAPI.value = true
     return true

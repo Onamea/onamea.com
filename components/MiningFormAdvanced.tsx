@@ -17,7 +17,6 @@ const canMineFromXPub = (cryptoName: CryptoName) => {
 }
 
 const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
-
   const name = useSignal<string>(nameProp ?? "")
   const cryptoName = useSignal<CryptoName>(cryptoNames[0])
   const shouldGenerateMnemonic = useSignal(false)
@@ -33,21 +32,25 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
       return
     }
     if (isNameOrFingerprintedName(nameValue) === false) {
-      error.value = `${ nameValue } is not a valid name`
+      error.value = `${nameValue} is not a valid name`
       return
     }
     const xpubValue = xpub.value?.trim()
     if (xpubValue !== "" && isXPub(xpubValue) === false) {
-      error.value = `${ xpubValue } is not a valid XPub`
+      error.value = `${xpubValue} is not a valid XPub`
       return
     }
     const mnemonicPassphraseValue = mnemonicPassphrase.value.trim()
     error.value = undefined
     await startMining(
-      cryptoName.value, 
-      nameValue, 
+      cryptoName.value,
+      nameValue,
       canGenerateMnemonic(cryptoName.value) ? shouldGenerateMnemonic.value : false,
-      canGenerateMnemonic(cryptoName.value) && shouldGenerateMnemonic.value && mnemonicPassphraseValue !== "" ? mnemonicPassphraseValue : undefined,
+      canGenerateMnemonic(cryptoName.value) &&
+        shouldGenerateMnemonic.value &&
+        mnemonicPassphraseValue !== ""
+        ? mnemonicPassphraseValue
+        : undefined,
       canMineFromXPub(cryptoName.value) && xpubValue !== "" ? xpubValue : undefined
     )
     name.value = ""
@@ -58,53 +61,58 @@ const MiningFormAdvanced: FunctionComponent<Props> = ({ name: nameProp }) => {
   }
 
   return (
-    <form onSubmit={ handleSubmit }>
+    <form onSubmit={handleSubmit}>
       <div>
         <label for="name">Name to mine:</label>
-        <input 
-          type="text" 
-          placeholder="Name" 
-          value={ name.value }
-          onChange={ event => { name.value = event.currentTarget.value } }
-          />
+        <input
+          type="text"
+          placeholder="Name"
+          value={name.value}
+          onChange={event => {
+            name.value = event.currentTarget.value
+          }}
+        />
         <ErrorDisplay message={error.value} />
       </div>
       <div>
         <label for="cryptoName">Select cryptographic curve:</label>
-        <select onChange={ event => { cryptoName.value = event.currentTarget.value as CryptoName } }>
-          { cryptoNames.map(value => (
-            <option value={ value } selected={ value === cryptoName.value }>{ value }</option>
-          )) }
+        <select
+          onChange={event => {
+            cryptoName.value = event.currentTarget.value as CryptoName
+          }}
+        >
+          {cryptoNames.map(value => (
+            <option value={value} selected={value === cryptoName.value}>
+              {value}
+            </option>
+          ))}
         </select>
       </div>
-      { canGenerateMnemonic(cryptoName.value) && 
+      {canGenerateMnemonic(cryptoName.value) && (
         <div>
           <label for="shouldGenerateMnemonic">Generate mnemonic:</label>
-          <input 
-            type="checkbox" 
-            name="shouldGenerateMnemonic" 
-            onChange={ event => shouldGenerateMnemonic.value = event.currentTarget.checked }
-            />
+          <input
+            type="checkbox"
+            name="shouldGenerateMnemonic"
+            onChange={event => (shouldGenerateMnemonic.value = event.currentTarget.checked)}
+          />
         </div>
-      }
-      { canGenerateMnemonic(cryptoName.value) && shouldGenerateMnemonic.value &&
+      )}
+      {canGenerateMnemonic(cryptoName.value) && shouldGenerateMnemonic.value && (
         <div>
           <label for="mnemonicPassphrase">Mnemonic passphrase:</label>
-          <input 
-            name="mnemonicPassphrase" 
-            onChange={ event => mnemonicPassphrase.value = event.currentTarget.value }
-            />
+          <input
+            name="mnemonicPassphrase"
+            onChange={event => (mnemonicPassphrase.value = event.currentTarget.value)}
+          />
         </div>
-      } 
-      { canMineFromXPub(cryptoName.value) && shouldGenerateMnemonic.value === false && 
+      )}
+      {canMineFromXPub(cryptoName.value) && shouldGenerateMnemonic.value === false && (
         <div>
           <label for="xpub">XPub:</label>
-          <input 
-            name="xpub" 
-            onChange={ event => xpub.value = event.currentTarget.value }
-            />
+          <input name="xpub" onChange={event => (xpub.value = event.currentTarget.value)} />
         </div>
-      }
+      )}
       <div class="input-wrap">
         <button type="submit">Mine</button>
       </div>

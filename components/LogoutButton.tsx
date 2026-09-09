@@ -2,7 +2,6 @@ import type { FunctionComponent } from "preact"
 import { myIdentity, clearMyIdentity } from "../lib/myIdentity.ts"
 
 const LogoutButton: FunctionComponent = () => {
-
   if (myIdentity.value === undefined) return null
 
   const onClick = () => {
@@ -11,7 +10,7 @@ const LogoutButton: FunctionComponent = () => {
   }
 
   return (
-    <button type="button" onClick={ onClick }>
+    <button type="button" onClick={onClick}>
       logout
     </button>
   )

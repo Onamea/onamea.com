@@ -16,7 +16,11 @@ const style = {
 }
 
 const EmojiButton: FunctionComponent<Props> = ({ emoji, title, onClick }) => {
-  return <button style={ style } type="button" title={ title } onClick={ onClick }>{ emoji }</button>
+  return (
+    <button style={style} type="button" title={title} onClick={onClick}>
+      {emoji}
+    </button>
+  )
 }
 
 export default EmojiButton

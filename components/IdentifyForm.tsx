@@ -9,13 +9,11 @@ const style = {
 }
 
 const IdentifyForm: FunctionComponent = () => {
-
   const name = useSignal("")
   const password = useSignal("")
   const error = useSignal<string>()
 
   const onSubmit = async (event: Event) => {
-
     event.preventDefault()
 
     error.value = undefined
@@ -27,7 +25,10 @@ const IdentifyForm: FunctionComponent = () => {
       error.value = "Invalid name"
       return
     }
-    if (isPrivateKeyDisplay(passwordValue) === false && isMnemonicDisplay(passwordValue) === false) {
+    if (
+      isPrivateKeyDisplay(passwordValue) === false &&
+      isMnemonicDisplay(passwordValue) === false
+    ) {
       error.value = "Invalid private key or mnemonic"
       return
     }
@@ -37,33 +38,33 @@ const IdentifyForm: FunctionComponent = () => {
       globalThis.location.href = "/me"
     } catch (err) {
       console.error(err)
-      error.value = `Identification failed: ${ (err as Error).message }`
+      error.value = `Identification failed: ${(err as Error).message}`
     }
   }
 
   return (
-    <form onSubmit={ onSubmit }>
+    <form onSubmit={onSubmit}>
       <div>
         <label for="name">Name</label>
-        <input 
-          name="name" 
-          value={ name.value } 
-          onInput={ e => name.value = (e.target as HTMLInputElement).value } 
+        <input
+          name="name"
+          value={name.value}
+          onInput={e => (name.value = (e.target as HTMLInputElement).value)}
         />
       </div>
       <div>
         <label>Private key / Mnemonic</label>
-        <input 
-          type="password" 
-          name="password" 
-          value={ password.value } 
-          onInput={ e => password.value = (e.target as HTMLInputElement).value } 
+        <input
+          type="password"
+          name="password"
+          value={password.value}
+          onInput={e => (password.value = (e.target as HTMLInputElement).value)}
         />
       </div>
       <div>
-        <ErrorDisplay message={ error.value } />
+        <ErrorDisplay message={error.value} />
       </div>
-      <div style={ style }>
+      <div style={style}>
         <button type="submit">Identify</button>
       </div>
     </form>

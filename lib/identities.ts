@@ -1,6 +1,14 @@
 import { signal } from "@preact/signals"
 import type { FingerprintedName, KeyPair } from "@onamea/types"
-import { type Identity, type IdentityWithMessages, type Operations, isIdentity, isIdentityWithMessages, signOperations, validateIdentity } from "@onamea/crdt"
+import {
+  type Identity,
+  type IdentityWithMessages,
+  type Operations,
+  isIdentity,
+  isIdentityWithMessages,
+  signOperations,
+  validateIdentity
+} from "@onamea/crdt"
 import { type Plural, toPlural } from "./utils/plural.ts"
 
 export const URL = "https://api.onamea.com/"
@@ -39,20 +47,19 @@ const validateIdentityResponse = async (identity: Identity | Identity[]): Promis
 }
 
 export const fetchLatestNames = async (): Promise<void> => {
-
   if (isFetching.value) return
 
   fetchingError.value = undefined
   isFetching.value = true
 
   try {
-    const response = await fetch(`${ URL }identities`)
+    const response = await fetch(`${URL}identities`)
     if (response.ok === false) {
       throw new Error("Failed to fetch names")
     }
 
     const identities = await response.json()
-    if (await validateIdentityResponse(identities) === false) {
+    if ((await validateIdentityResponse(identities)) === false) {
       throw new Error("An invalid identity received from server")
     }
     addToNames(identities)
@@ -64,7 +71,6 @@ export const fetchLatestNames = async (): Promise<void> => {
 }
 
 export const fetchById = async (id: string): Promise<Identity | undefined> => {
-
   const identity = names.value.find(identity => identity.id === id)
   if (identity !== undefined) {
     return identity
@@ -73,13 +79,13 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
   isFetchingByNameKey.value = true
 
   try {
-    const response = await fetch(`${ URL }identities/id/${ id }`)
+    const response = await fetch(`${URL}identities/id/${id}`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
 
     const identity = await response.json()
-    if (await validateIdentityResponse(identity) === false) {
+    if ((await validateIdentityResponse(identity)) === false) {
       throw new Error("Invalid identity received from server")
     }
     addToNames(identity)
@@ -92,25 +98,26 @@ export const fetchById = async (id: string): Promise<Identity | undefined> => {
   return undefined
 }
 
-export const fetchByFingerprintedName = async (fingerprintedName: FingerprintedName): Promise<Identity[]> => {
-
+export const fetchByFingerprintedName = async (
+  fingerprintedName: FingerprintedName
+): Promise<Identity[]> => {
   isFetchingByFingerprintedName.value = true
 
   try {
-
-    const response = await fetch(`${ URL }identities/name/${ fingerprintedName }`)
+    const response = await fetch(`${URL}identities/name/${fingerprintedName}`)
     if (response.ok === false) {
       throw new Error("Failed to fetch by nameKey")
     }
 
     const identities = await response.json()
-    if (await validateIdentityResponse(identities) === false) {
+    if ((await validateIdentityResponse(identities)) === false) {
       throw new Error("Invalid identities received from server")
     }
     addToNames(identities)
     return identities
   } catch (err) {
-    fetchingByFingerprintedNameError.value = err instanceof Error ? err.message : "An error occurred"
+    fetchingByFingerprintedNameError.value =
+      err instanceof Error ? err.message : "An error occurred"
   } finally {
     isFetchingByFingerprintedName.value = false
   }
@@ -118,8 +125,10 @@ export const fetchByFingerprintedName = async (fingerprintedName: FingerprintedN
   return []
 }
 
-export const publishOperations = async (operations: Operations, keyPair: KeyPair): Promise<IdentityWithMessages | undefined> => {
-  
+export const publishOperations = async (
+  operations: Operations,
+  keyPair: KeyPair
+): Promise<IdentityWithMessages | undefined> => {
   const messages = await signOperations(operations, keyPair, Date.now())
 
   postingError.value = undefined
@@ -134,10 +143,13 @@ export const publishOperations = async (operations: Operations, keyPair: KeyPair
       body: JSON.stringify(messages)
     })
     if (response.ok === false) {
-      throw new Error(`Publish failed: ${ response.statusText }`)
+      throw new Error(`Publish failed: ${response.statusText}`)
     }
     const [identity] = await response.json()
-    if (await validateIdentityResponse(identity) === false || isIdentityWithMessages(identity) === false) {
+    if (
+      (await validateIdentityResponse(identity)) === false ||
+      isIdentityWithMessages(identity) === false
+    ) {
       throw new Error("Invalid IdentityWithMessages received from server")
     }
     addToNames(identity)
@@ -147,5 +159,5 @@ export const publishOperations = async (operations: Operations, keyPair: KeyPair
   } finally {
     isPosting.value = false
   }
-  return undefined 
+  return undefined
 }

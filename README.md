@@ -1,17 +1,31 @@
-# Fresh project
+# Onamea
 
-Your new Fresh project is ready to go. You can follow the Fresh "Getting
-Started" guide here: https://fresh.deno.dev/docs/getting-started
+Onamea is a client-side Preact application built with Vite.
 
-### Usage
+## Development
 
-Make sure to install Deno:
-https://docs.deno.com/runtime/getting_started/installation
+Install dependencies with pnpm, then start the development server:
 
-Then start the project in development mode:
-
-```
-deno task dev
+```sh
+pnpm install
+pnpm dev
 ```
 
-This will watch the project directory and restart as necessary.
+Run checks and create a production build with:
+
+```sh
+pnpm check
+pnpm build
+```
+
+Preview the Cloudflare Workers Static Assets deployment locally or deploy it with:
+
+```sh
+pnpm cf:dev
+pnpm cf:deploy
+```
+
+GitHub Actions deploys pushes to `main`. Add `CLOUDFLARE_ACCOUNT_ID` and
+`CLOUDFLARE_API_TOKEN` as repository actions secrets. The initial deployment
+uses the Worker `workers.dev` address; attach a custom domain in Cloudflare if
+desired.

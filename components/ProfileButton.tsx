@@ -9,22 +9,23 @@ const style = {
   textDecoration: "none"
 }
 
-const spanStyle = { 
+const spanStyle = {
   filter: "grayscale(100%)",
   width: "1em",
   marginRight: "12px"
 }
 
 const ProfileButton: FunctionComponent = () => {
-
   const isIdentified = myIdentity.value !== undefined
   const href = isIdentified ? "/me" : "/identify"
-  const content = isIdentified ? myIdentity.value!.displayName ?? myIdentity.value!.id : "Identify"
+  const content = isIdentified
+    ? (myIdentity.value!.displayName ?? myIdentity.value!.id)
+    : "Identify"
 
   return (
-    <a style={ style } href={ href }>  
-      <span style={ spanStyle }>👨‍💻</span>
-      { content }
+    <a style={style} href={href}>
+      <span style={spanStyle}>👨‍💻</span>
+      {content}
     </a>
   )
 }
