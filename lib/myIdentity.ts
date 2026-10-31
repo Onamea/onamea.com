@@ -112,7 +112,8 @@ export const updateMyIdentity = async (operation: Plural<Operation>, shouldPubli
   const nextMyIdentity = await buildMyIdentity(
     myIdentity.value.id,
     myIdentity.value.keyPair,
-    nextOperations
+    nextOperations,
+    myIdentity.value.messages
   )
   myIdentity.value = nextMyIdentity
   persist(nextMyIdentity)
