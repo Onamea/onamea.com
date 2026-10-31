@@ -1,5 +1,6 @@
 import { signal } from "@preact/signals"
 import { isNameOrFingerprintedName, type NameKey } from "@onamea/types"
+import { URL } from "../lib/identities.ts"
 import NameDisplay from "./NameDisplay.tsx"
 
 const searchTerm = signal("")
@@ -27,9 +28,7 @@ const handleSubmit = async (e: Event) => {
   results.value = undefined
 
   try {
-    const response = await fetch(
-      `https://api.onamea.com/name/${encodeURIComponent(searchTerm.value)}`
-    )
+    const response = await fetch(`${URL}name/${encodeURIComponent(searchTerm.value)}`)
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`)
     }

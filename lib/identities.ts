@@ -11,7 +11,7 @@ import {
 } from "@onamea/crdt"
 import { type Plural, toPlural } from "./utils/plural.ts"
 
-export const URL = "https://api.onamea.com/"
+export const URL = import.meta.env.VITE_API_BASE_URL
 export const IDENTITY_KEY_DOMAIN = "onamea.com"
 
 export const names = signal<IdentityWithMessages[]>([])
