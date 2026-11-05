@@ -16,15 +16,21 @@ const LatestNames: FunctionComponent = () => {
       <h3>Recently published names</h3>
       {isFetching.value && <p>Loading...</p>}
       <ErrorDisplay message={fetchingError.value} />
-      {!isFetching.value && !fetchingError.value && (
-        <ul>
-          {names.value.map(({ id }) => (
-            <li key={id}>
-              <NameDisplay nameKey={id} shouldLink />
-            </li>
-          ))}
-        </ul>
-      )}
+      {!isFetching.value &&
+        !fetchingError.value &&
+        (names.value.length > 0 ? (
+          <ul>
+            {names.value.map(({ id }) => (
+              <li key={id}>
+                <NameDisplay nameKey={id} shouldLink />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>
+            <i>No names, yet</i>
+          </p>
+        ))}
     </div>
   )
 }
