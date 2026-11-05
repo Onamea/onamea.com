@@ -34,7 +34,8 @@ const PublishForm: FunctionComponent<Props> = ({
     event.preventDefault()
     if (myIdentity.value === undefined) {
       const keyPair = keyPairFromPrivateKey(cryptoName, privateKeyDisplay)
-      await initMyIdentity(nameKey, keyPair, body.value)
+      const bodyValue = body.value.trim()
+      await initMyIdentity(nameKey, keyPair, bodyValue !== "" ? bodyValue : undefined)
       globalThis.location.assign("/me")
     } else {
       throw new Error("Already identified")
